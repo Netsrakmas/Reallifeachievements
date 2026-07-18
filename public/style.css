@@ -280,6 +280,7 @@ table.board td.pts { font-family: var(--font-mono); font-weight: 600; }
   }
 }
 
+#qr-svg svg { display: block; width: 100%; height: auto; }
 .photo-preview { max-width: 100%; border-radius: var(--radius); border: 1px solid var(--gold-line); margin-top: var(--s2); }
 .photo-late-tag { font-family: var(--font-mono); font-size: 11px; color: var(--mischief); }
 .award-photo { max-width: 240px; border-radius: var(--radius); border: 1px solid var(--gold-line); margin-top: var(--s2); display: block; }
