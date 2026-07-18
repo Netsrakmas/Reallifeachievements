@@ -1,0 +1,14 @@
+# Render Blueprint — deployt Pluim & Duivel met één klik via "New > Blueprint".
+# De blijvende schijf op /data bewaart de SQLite-database en bewijsfoto's;
+# daarvoor is het betaalde Starter-instapplan nodig (± $7/mnd + $0,25/GB schijf).
+services:
+  - type: web
+    name: pluim-en-duivel
+    runtime: docker
+    plan: starter
+    region: frankfurt
+    healthCheckPath: /login
+    disk:
+      name: data
+      mountPath: /data
+      sizeGB: 1

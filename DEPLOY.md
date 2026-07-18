@@ -15,15 +15,26 @@ volume seedt hij automatisch de demo-data. Configuratie via omgevingsvariabelen:
 HTTPS wordt afgehandeld door de host/reverse proxy; de app zet `trust proxy`
 zodat QR-claim-links automatisch de juiste `https://…`-URL krijgen.
 
-## Optie A — Render.com (makkelijkst te klikken)
+## Optie A — Render.com (makkelijkst te klikken; gekozen optie)
 
-1. Push deze repo naar GitHub (staat er al) en maak een account op render.com.
-2. **New → Web Service** → koppel de repo → Render herkent de `Dockerfile` vanzelf.
-3. Voeg onder **Disks** een schijf toe van 1 GB, mount path `/data`.
-4. Deploy. Klaar — je krijgt een `https://…onrender.com`-adres voor op ieders telefoon.
+De repo bevat een `render.yaml`-blueprint die alles al instelt (Docker, schijf
+op `/data`, regio Frankfurt, health check). Stappen — kan volledig op je telefoon:
 
-Let op: een blijvende schijf vereist het betaalde instapplan (± $7/mnd). Het
-gratis plan draait ook, maar dan reset de database bij elke deploy/herstart.
+1. Ga naar https://render.com en maak een account (inloggen met GitHub is het
+   handigst — dan is de repo-koppeling meteen geregeld).
+2. Dashboard → **New → Blueprint** → kies de repo `netsrakmas/reallifeachievements`.
+3. Render leest `render.yaml` en toont "pluim-en-duivel" → klik **Apply/Deploy**.
+4. Wacht tot de eerste build klaar is (paar minuten; de demo-data wordt bij de
+   eerste start automatisch geseed).
+5. Je krijgt een adres als `https://pluim-en-duivel.onrender.com` — dat is de
+   app, voor iedereen met de link. Log in met `jesse` / `demo123` of registreer
+   eigen accounts, en deel de URL met je vrienden.
+
+Kosten: het Starter-plan (± $7/mnd) + $0,25/GB voor de schijf. De blijvende
+schijf is nodig zodat badges en foto's een herstart overleven — op het gratis
+plan draait de app ook, maar reset de database bij elke deploy/herstart.
+
+Elke push naar de gekoppelde branch deployt daarna automatisch opnieuw.
 
 ## Optie B — Fly.io (goedkoopste "echte" hosting, ± $2–3/mnd)
 
