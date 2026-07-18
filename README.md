@@ -25,6 +25,11 @@ een award van de een verschijnt binnen 8 seconden bij de ander.
 - **Award-flow**: kies persoon → kies badge → schrijf een citatie (het verhaal is
   de helft van de badge) → tag optioneel getuigen → maak optioneel een live
   bewijsfoto. Maximaal 5 toekenningen per dag (schaarste maakt betekenis).
+- **Overhandigen via QR** 🤝: kies in de award-modal "📱 Via QR" — de app toont
+  een QR-code die 10 minuten geldig is en strikt éénmalig werkt. De ontvanger
+  scant hem met de telefooncamera en claimt de badge. Omdat scannen alleen kan
+  als je bij elkaar staat, telt een QR-claim als fysiek bewijs: de badge start
+  meteen op "Ooggetuige bevestigd" en draagt het zegel "in persoon overhandigd".
 - **Geloofwaardigheidssysteem** ("soft integrity" — de actie slaagt altijd, alleen
   de beloningslaag discrimineert, stilletjes):
   - Elke award krijgt een geloofwaardigheids-tier: *Onbevestigd gerucht* →

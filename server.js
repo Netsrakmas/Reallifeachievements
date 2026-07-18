@@ -1,6 +1,7 @@
 // Pluim & Duivel — server. Start met: node server.js
 const express = require('express');
 const crypto = require('crypto');
+const QRCode = require('qrcode');
 const fs = require('fs');
 const path = require('path');
 const C = require('./constants');
@@ -78,9 +79,14 @@ function page(req, res, { title, active, content }) {
 
 // ---- auth-routes -----------------------------------------------------------
 
+// Alleen interne paden als redirect-doel accepteren (geen open redirect).
+function safeNext(raw) {
+  return typeof raw === 'string' && raw.startsWith('/') && !raw.startsWith('//') ? raw : '/';
+}
+
 app.get('/login', (req, res) => {
-  if (req.user) return res.redirect('/');
-  res.send(V.layout({ user: null, title: 'Inloggen', content: V.loginPage() }));
+  if (req.user) return res.redirect(safeNext(req.query.next));
+  res.send(V.layout({ user: null, title: 'Inloggen', content: V.loginPage({ next: req.query.next }) }));
 });
 
 app.post('/login', (req, res) => {
@@ -89,11 +95,11 @@ app.post('/login', (req, res) => {
   if (!user || !verifyPassword(password || '', user.password_hash)) {
     return res.status(401).send(V.layout({
       user: null, title: 'Inloggen',
-      content: V.loginPage({ error: 'Gebruikersnaam en wachtwoord passen niet bij elkaar.', values: { username } }),
+      content: V.loginPage({ error: 'Gebruikersnaam en wachtwoord passen niet bij elkaar.', values: { username }, next: req.body.next }),
     }));
   }
   startSession(res, user.id);
-  res.redirect('/');
+  res.redirect(safeNext(req.body.next));
 });
 
 app.post('/register', (req, res) => {
@@ -112,7 +118,7 @@ app.post('/register', (req, res) => {
     INSERT INTO users (username, display_name, password_hash) VALUES (?, ?, ?)
   `).run(username, display, hashPassword(password));
   startSession(res, info.lastInsertRowid);
-  res.redirect('/');
+  res.redirect(safeNext(req.body.next));
 });
 
 app.post('/logout', (req, res) => {
@@ -310,6 +316,69 @@ app.post('/api/awards/:id/react', requireApi, (req, res) => {
     svc.checkAutoBadges(db, award.recipient_id);
   }
   res.json({ html: V.awardCard(svc.awardView(db, award, req.user.id)) });
+});
+
+// ---- QR-overhandiging ------------------------------------------------------
+
+app.post('/api/qr-awards', requireApi, (req, res) => {
+  try {
+    const token = crypto.randomBytes(16).toString('hex');
+    const { badge, expiresAt } = svc.createToken(db, {
+      giverId: req.user.id, badgeSlug: req.body.badge_slug, citation: req.body.citation, token,
+    });
+    const claimUrl = `${req.protocol}://${req.get('host')}/claim/${token}`;
+    QRCode.toString(claimUrl, { type: 'svg', margin: 1, width: 260 }, (err, svg) => {
+      if (err) return res.status(500).json({ error: 'De QR-code kon niet worden gemaakt. Probeer het opnieuw.' });
+      res.json({
+        token, claimUrl, expiresAt, qrSvg: svg, badgeNaam: badge.naam,
+        remaining: svc.dailyRemaining(db, req.user.id),
+      });
+    });
+  } catch (e) {
+    res.status(e.status || 500).json({ error: e.message });
+  }
+});
+
+app.get('/api/qr-awards/:token/status', requireApi, (req, res) => {
+  const { state, row } = svc.tokenState(db, req.params.token);
+  if (state === 'unknown' || row.giver_id !== req.user.id) {
+    return res.status(404).json({ error: 'Deze QR-code is niet (meer) geldig.' });
+  }
+  let claimedBy = null;
+  if (state === 'used') {
+    const award = db.prepare(`
+      SELECT u.display_name FROM awards a JOIN users u ON u.id = a.recipient_id WHERE a.id = ?
+    `).get(row.claimed_award_id);
+    claimedBy = award ? award.display_name : null;
+  }
+  res.json({ state, claimedBy, remaining: svc.dailyRemaining(db, req.user.id) });
+});
+
+app.get('/claim/:token', (req, res) => {
+  const { state, row } = svc.tokenState(db, req.params.token);
+  const content = V.claimPage({ state, row: row ? { ...row, token: req.params.token } : null, user: req.user });
+  if (!req.user) {
+    return res.send(V.layout({ user: null, title: 'Badge claimen', content }));
+  }
+  page(req, res, { title: 'Badge claimen', active: '', content });
+});
+
+app.post('/claim/:token', requirePage, (req, res) => {
+  try {
+    const award = svc.claimToken(db, { token: req.params.token, claimerId: req.user.id });
+    const card = V.awardCard(svc.awardView(db, award, req.user.id), { stamped: true });
+    page(req, res, { title: 'Badge geclaimd', active: '', content: V.claimPage({ claimedCard: card }) });
+  } catch (e) {
+    const { state, row } = svc.tokenState(db, req.params.token);
+    const content = V.claimPage({
+      state: state === 'open' ? 'open' : state,
+      row: row ? { ...row, token: req.params.token } : null,
+      user: req.user,
+      error: e.message,
+    });
+    res.status(e.status || 500);
+    page(req, res, { title: 'Badge claimen', active: '', content });
+  }
 });
 
 app.get('/api/notifications', requireApi, (req, res) => {

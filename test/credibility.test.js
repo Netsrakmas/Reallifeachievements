@@ -16,6 +16,16 @@ test('award-credibility: basis, getuigen en foto', () => {
   assert.equal(cred.awardCredibility({ witnessCount: 3, timelyPhoto: true }), 1);
 });
 
+test('QR-claim (in persoon) weegt zwaarder dan een getuige', () => {
+  const qr = cred.awardCredibility({ inPerson: true });
+  assert.equal(qr, C.CRED_BASE + C.QR_BONUS);
+  assert.ok(qr > cred.awardCredibility({ witnessCount: 1 }));
+  // QR-claim start direct op "Ooggetuige bevestigd" (>= 0.65 voor fuzz)
+  assert.ok(qr >= 0.65 + C.CRED_FUZZ);
+  // en klemt netjes op 1 met alles erbij
+  assert.equal(cred.awardCredibility({ witnessCount: 3, timelyPhoto: true, inPerson: true }), 1);
+});
+
 test('paar-cap: 4e award A->B in 30 dagen weegt 50%, 7e weegt 10%', () => {
   assert.equal(cred.pairWeight(0), 1);
   assert.equal(cred.pairWeight(2), 1);       // 3e award: nog vol

@@ -153,10 +153,12 @@
   let users = [], badges = [];
   let selPerson = null, selBadge = null, selWitnesses = new Set();
   let photoData = null, cameraStream = null;
+  let qrMode = false, qrTimer = null, qrPollTimer = null;
 
   async function openModal(preselectBadge = null) {
     modal.classList.remove('hidden');
     errBox.classList.add('hidden');
+    setMode(false);
     try {
       if (!users.length) users = (await api('/api/users')).users;
       if (!badges.length) badges = (await api('/api/badges')).badges;
@@ -175,6 +177,58 @@
   function closeModal() {
     modal.classList.add('hidden');
     stopCamera();
+    stopQr();
+  }
+
+  // ---- QR-modus ------------------------------------------------------------
+  function setMode(qr) {
+    qrMode = qr;
+    document.getElementById('mode-person').classList.toggle('active', !qr);
+    document.getElementById('mode-qr').classList.toggle('active', qr);
+    document.getElementById('person-section').classList.toggle('hidden', qr);
+    document.getElementById('qr-explain').classList.toggle('hidden', !qr);
+    document.getElementById('witness-section').classList.toggle('hidden', qr);
+    document.getElementById('photo-section').classList.toggle('hidden', qr);
+    document.getElementById('qr-result').classList.add('hidden');
+    document.getElementById('award-submit').textContent = qr ? '📱 Maak QR-code' : '🏵️ Ken toe';
+    stopQr();
+  }
+
+  function stopQr() {
+    if (qrTimer) { clearInterval(qrTimer); qrTimer = null; }
+    if (qrPollTimer) { clearInterval(qrPollTimer); qrPollTimer = null; }
+  }
+
+  function showQr(data) {
+    const result = document.getElementById('qr-result');
+    document.getElementById('qr-svg').innerHTML = data.qrSvg;
+    document.getElementById('qr-url').textContent = data.claimUrl;
+    document.getElementById('qr-status').textContent = 'Wachten op scan…';
+    result.classList.remove('hidden');
+    updateBudget(data.remaining);
+    const countdown = document.getElementById('qr-countdown');
+    const tick = () => {
+      const left = Math.max(0, new Date(data.expiresAt) - Date.now());
+      const m = Math.floor(left / 60000), s = Math.floor((left % 60000) / 1000);
+      countdown.textContent = m + ':' + String(s).padStart(2, '0');
+      if (left <= 0) {
+        document.getElementById('qr-status').textContent = 'Verlopen — maak een nieuwe QR-code.';
+        stopQr();
+      }
+    };
+    tick();
+    qrTimer = setInterval(tick, 1000);
+    qrPollTimer = setInterval(async () => {
+      try {
+        const st = await api('/api/qr-awards/' + data.token + '/status');
+        if (st.state === 'used') {
+          document.getElementById('qr-status').textContent = 'Geclaimd door ' + (st.claimedBy || 'iemand') + '! 🎉';
+          updateBudget(st.remaining);
+          stopQr();
+          setTimeout(() => { closeModal(); poll(); }, 1800);
+        }
+      } catch (e) { /* poll stil laten falen; volgende tick probeert opnieuw */ }
+    }, 3000);
   }
 
   function renderPersons() {
@@ -263,9 +317,27 @@
     video.classList.add('hidden');
   }
 
+  document.getElementById('mode-person').addEventListener('click', () => setMode(false));
+  document.getElementById('mode-qr').addEventListener('click', () => setMode(true));
+
   document.getElementById('award-submit').addEventListener('click', async () => {
     errBox.classList.add('hidden');
     document.getElementById('citation-error').classList.add('hidden');
+    if (qrMode) {
+      if (!selBadge) { errBox.textContent = 'Kies eerst een badge uit de catalogus.'; errBox.classList.remove('hidden'); return; }
+      try {
+        const data = await api('/api/qr-awards', {
+          method: 'POST',
+          body: { badge_slug: selBadge.slug, citation: citation.value },
+        });
+        showQr(data);
+      } catch (e) {
+        const box = /citatie/i.test(e.message) ? document.getElementById('citation-error') : errBox;
+        box.textContent = e.message;
+        box.classList.remove('hidden');
+      }
+      return;
+    }
     if (!selPerson) { errBox.textContent = 'Kies eerst een ontvanger.'; errBox.classList.remove('hidden'); return; }
     if (!selBadge) { errBox.textContent = 'Kies eerst een badge uit de catalogus.'; errBox.classList.remove('hidden'); return; }
     try {

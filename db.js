@@ -12,8 +12,18 @@ function open(dbPath) {
   db.pragma('synchronous = NORMAL');
   db.pragma('foreign_keys = ON');
   db.exec(fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8'));
+  migrate(db);
   loadBadges(db);
   return db;
+}
+
+// Kolommen die na de eerste release zijn toegevoegd (CREATE IF NOT EXISTS
+// werkt niet voor kolommen op bestaande tabellen).
+function migrate(db) {
+  const cols = db.prepare(`PRAGMA table_info(awards)`).all().map(c => c.name);
+  if (!cols.includes('in_person')) {
+    db.exec(`ALTER TABLE awards ADD COLUMN in_person INTEGER NOT NULL DEFAULT 0`);
+  }
 }
 
 // Catalogus uit badges.json in de db spiegelen (idempotent; ketens worden

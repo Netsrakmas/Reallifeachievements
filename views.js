@@ -78,6 +78,8 @@ function awardCard(v, { stamped = false } = {}) {
   const stanceButtons = v.canStance ? `
     <button class="react-btn ${v.myStance === 'vouch' ? 'mine' : ''}" data-stance="vouch" data-award="${v.id}">✋ Ik was erbij${v.myStance === 'vouch' ? ' ✓' : ''}</button>
     <button class="react-btn ${v.myStance === 'doubt' ? 'mine' : ''}" data-stance="doubt" data-award="${v.id}">🤨 Betwijfel ik${v.myStance === 'doubt' ? ' ✓' : ''}</button>` : '';
+  const inPerson = v.in_person
+    ? `<div class="award-meta">🤝 In persoon overhandigd via QR</div>` : '';
   const witnesses = v.witnesses.length
     ? `<div class="award-meta">✋ Bevestigd door ${v.witnesses.map(esc).join(', ')}</div>` : '';
   const doubts = v.doubts.length
@@ -105,6 +107,7 @@ function awardCard(v, { stamped = false } = {}) {
         ${reactions}
         ${stanceButtons}
       </div>
+      ${inPerson}
       ${witnesses}
       ${doubts}
     </div>
@@ -127,7 +130,8 @@ function feedPage({ views }) {
   <div id="feed">${cards}</div>`;
 }
 
-function loginPage({ error = null, mode = 'login', values = {} } = {}) {
+function loginPage({ error = null, mode = 'login', values = {}, next = '' } = {}) {
+  const nextField = next ? `<input type="hidden" name="next" value="${esc(next)}">` : '';
   return `
   <div style="max-width:420px;margin:8vh auto 0">
     <div class="eyebrow">Sinds heden · officieel register</div>
@@ -140,6 +144,7 @@ function loginPage({ error = null, mode = 'login', values = {} } = {}) {
         <button class="tab ${mode === 'register' ? 'active' : ''}" data-authtab="register" type="button">Account maken</button>
       </div>
       <form method="post" action="/login" id="form-login" class="${mode === 'login' ? '' : 'hidden'}">
+        ${nextField}
         <label for="l-username">Gebruikersnaam</label>
         <input id="l-username" name="username" autocomplete="username" required value="${esc(values.username || '')}">
         <label for="l-password">Wachtwoord</label>
@@ -147,6 +152,7 @@ function loginPage({ error = null, mode = 'login', values = {} } = {}) {
         <p><button class="btn" type="submit">Log in</button></p>
       </form>
       <form method="post" action="/register" id="form-register" class="${mode === 'register' ? '' : 'hidden'}">
+        ${nextField}
         <label for="r-username">Gebruikersnaam</label>
         <input id="r-username" name="username" autocomplete="username" minlength="2" maxlength="24" pattern="[a-zA-Z0-9_-]+" required value="${esc(values.username || '')}">
         <label for="r-display">Weergavenaam</label>
@@ -309,6 +315,48 @@ function leaderboardPage({ tab, rows, weekLabel }) {
   <div class="card reveal">${table}</div>`;
 }
 
+// Claim-pagina voor gescande QR-codes; state bepaalt de boodschap.
+function claimPage({ state, row, user, claimedCard = null, error = null }) {
+  if (claimedCard) {
+    return `
+    <div class="eyebrow reveal">Officieel overhandigd</div>
+    <h1 class="reveal">Gefeliciteerd! 🤝</h1>
+    <p class="muted reveal">De badge staat op je plank, met het zegel "in persoon overhandigd".</p>
+    ${claimedCard}
+    <p><a class="btn" href="/">Naar de feed</a></p>`;
+  }
+  const MESSAGES = {
+    unknown: ['🕳️', 'Deze QR-code is niet (meer) geldig', 'Controleer of je de juiste code hebt gescand, of vraag om een nieuwe.'],
+    used: ['🔒', 'Deze QR-code is al gebruikt', 'Een badge claim je maar één keer. De eer is al vergeven.'],
+    expired: ['⏳', 'Deze QR-code is verlopen', `Een QR-badge is ${C.QR_TOKEN_TTL_MIN} minuten geldig. Vraag om een nieuwe.`],
+  };
+  if (MESSAGES[state]) {
+    const [emoji, title, sub] = MESSAGES[state];
+    return `<div class="empty-state card" style="margin-top:10vh"><div class="big">${emoji}</div>
+      <h1 style="font-size:28px">${title}</h1><p class="muted">${sub}</p>
+      <p><a class="btn btn-ghost" href="/">Naar de feed</a></p></div>`;
+  }
+  const b = { slug: row.badge_slug, naam: row.naam, emoji: row.emoji, rarity: row.rarity, categorie: row.categorie };
+  return `
+  <div class="eyebrow reveal">Er wordt je een eer aangeboden</div>
+  <h1 class="reveal" style="font-size:36px">${esc(row.giver_avatar)} ${esc(row.giver_name)} overhandigt je een badge</h1>
+  ${error ? `<div class="form-error" role="alert">${esc(error)}</div>` : ''}
+  <div class="card award-card reveal">
+    ${badgeRing(b)}
+    <div>
+      <div class="award-badge-name">${esc(row.naam)}
+        <span class="rarity-label ${esc(row.rarity)}">${RARITY_NL[row.rarity]}</span></div>
+      <blockquote class="citation">"${esc(row.citation)}"</blockquote>
+      ${user
+        ? `<form method="post" action="/claim/${esc(row.token)}" style="margin-top:var(--s2)">
+             <button class="btn" type="submit">🤝 Claim deze badge</button>
+           </form>`
+        : `<p class="muted">Log eerst in om hem te claimen — daarna kom je hier terug.</p>
+           <p><a class="btn" href="/login?next=${encodeURIComponent('/claim/' + row.token)}">Log in en claim</a></p>`}
+    </div>
+  </div>`;
+}
+
 function awardModal(remaining) {
   return `
   <div class="modal-backdrop hidden" id="award-modal">
@@ -318,9 +366,19 @@ function awardModal(remaining) {
       <p class="muted">Vandaag nog <strong class="mono" id="budget-left">${remaining ?? '…'}</strong> van ${C.DAILY_AWARD_CAP} toekenningen beschikbaar.</p>
       <div class="form-error hidden" id="award-error" role="alert"></div>
 
-      <label for="pick-person">1. Wie verdient hem?</label>
-      <input id="pick-person" placeholder="Zoek op naam…" autocomplete="off">
-      <div class="picker-list" id="person-list" aria-live="polite"><div class="skeleton" style="height:44px"></div></div>
+      <label>1. Wie verdient hem?</label>
+      <div class="tabs" role="group" aria-label="Manier van toekennen">
+        <button class="tab active" type="button" id="mode-person">👤 Kies persoon</button>
+        <button class="tab" type="button" id="mode-qr">📱 Via QR</button>
+      </div>
+      <div id="person-section">
+        <input id="pick-person" placeholder="Zoek op naam…" autocomplete="off" aria-label="Zoek een persoon">
+        <div class="picker-list" id="person-list" aria-live="polite"><div class="skeleton" style="height:44px"></div></div>
+      </div>
+      <p class="muted hidden" id="qr-explain" style="font-size:14px">
+        Sta je naast elkaar? Kies een badge, schrijf de citatie en laat de ander de QR
+        scannen — de badge telt dan als <strong>in persoon overhandigd</strong> (extra geloofwaardig).
+      </p>
 
       <label for="pick-badge">2. Welke badge?</label>
       <input id="pick-badge" placeholder="Zoek in de catalogus…" autocomplete="off">
@@ -331,9 +389,20 @@ function awardModal(remaining) {
       <div class="muted mono" style="font-size:12px"><span id="citation-count">0</span>/${C.CITATION_MAX}</div>
       <div class="field-error hidden" id="citation-error"></div>
 
-      <label>Getuigen (optioneel — maakt de badge geloofwaardiger)</label>
-      <div class="picker-list" id="witness-list" style="max-height:140px"></div>
+      <div id="witness-section">
+        <label>Getuigen (optioneel — maakt de badge geloofwaardiger)</label>
+        <div class="picker-list" id="witness-list" style="max-height:140px"></div>
+      </div>
 
+      <div class="hidden" id="qr-result" aria-live="polite" style="text-align:center">
+        <div id="qr-svg" style="background:var(--ink);border-radius:var(--radius-lg);padding:var(--s3);display:inline-block;max-width:280px;margin-top:var(--s2)"></div>
+        <p class="muted" style="font-size:14px">Laat scannen met de telefooncamera ·
+          nog <strong class="mono" id="qr-countdown"></strong> geldig</p>
+        <p class="mono" style="font-size:12px;word-break:break-all" id="qr-url"></p>
+        <p id="qr-status" class="muted" style="font-weight:700">Wachten op scan…</p>
+      </div>
+
+      <div id="photo-section">
       <label>Bewijsfoto (optioneel, alleen live camera)</label>
       <div style="display:flex;gap:var(--s2);flex-wrap:wrap">
         <button class="btn btn-ghost" type="button" id="camera-btn">📷 Maak foto</button>
@@ -346,6 +415,7 @@ function awardModal(remaining) {
       <canvas id="camera-canvas" class="hidden"></canvas>
       <img id="photo-preview" class="photo-preview hidden" alt="Voorbeeld van de bewijsfoto">
       <div class="field-error hidden" id="camera-error"></div>
+      </div>
 
       <p style="display:flex;gap:var(--s2);margin-top:var(--s4)">
         <button class="btn" id="award-submit">🏵️ Ken toe</button>
@@ -357,5 +427,5 @@ function awardModal(remaining) {
 
 module.exports = {
   esc, layout, awardCard, feedPage, loginPage, catalogPage,
-  badgeDetailPage, profilePage, leaderboardPage, timeAgo,
+  badgeDetailPage, profilePage, leaderboardPage, claimPage, timeAgo,
 };

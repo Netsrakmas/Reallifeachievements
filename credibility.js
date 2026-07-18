@@ -2,10 +2,13 @@
 // zelfde input geeft altijd dezelfde output. Onderbouwing: RESEARCH.md.
 const C = require('./constants');
 
-// Geloofwaardigheid van een individuele award, in [0,1].
-function awardCredibility({ witnessCount = 0, timelyPhoto = false }) {
+// Geloofwaardigheid van een individuele award, in [0,1]. Een QR-claim
+// (inPerson) is fysiek bewijs van nabijheid en weegt zwaarder dan een getuige.
+function awardCredibility({ witnessCount = 0, timelyPhoto = false, inPerson = false }) {
   const witnesses = Math.min(witnessCount, C.WITNESS_MAX);
-  let cred = C.CRED_BASE + witnesses * C.WITNESS_BONUS + (timelyPhoto ? C.PHOTO_BONUS : 0);
+  let cred = C.CRED_BASE + witnesses * C.WITNESS_BONUS
+    + (timelyPhoto ? C.PHOTO_BONUS : 0)
+    + (inPerson ? C.QR_BONUS : 0);
   return Math.min(1, Math.max(0, cred));
 }
 

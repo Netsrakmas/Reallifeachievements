@@ -44,6 +44,9 @@ module.exports = {
   SOFT_BAN_HOURS: 48,
   // Weergave-fuzz van credibility (Reddit-principe), deterministisch per award
   CRED_FUZZ: 0.03,
+  // QR-overhandiging (scannen = fysiek bewijs van nabijheid)
+  QR_TOKEN_TTL_MIN: 10,            // claim-token verloopt na 10 min; strikt eenmalig
+  QR_BONUS: 0.2,                   // geclaimde QR-award start op 0.5 + 0.2 = "Ooggetuige bevestigd"
   // UI
   POLL_MS: 8000,
   LEAGUE_MAX: 30,

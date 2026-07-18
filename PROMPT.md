@@ -463,3 +463,43 @@ Loop de volledige lijst uit §11 langs en rapporteer per criterium pass/fail met
 stap 3, betwiste kaart, catalogus met "???"-badges, profiel-plank, ranglijst. Squint-test
 tegen het stijlanker: leest het als een padvindershandboek uit 1962 — of als een
 AI-startpagina? Bij het tweede: herzie §5-implementatie vóór oplevering.
+
+---
+
+## 14. Feature-uitbreiding: badges weggeven via QR-code
+
+**Idee**: een badge fysiek "overhandigen". De gever kiest badge + citatie, de app toont een
+QR-code; de ontvanger scant hem met de telefooncamera en claimt de badge. Omdat scannen
+alleen kan als je bij elkaar bent, is een QR-claim zelf bewijs van co-locatie — sterker
+dan een getuige-tik (precedent: Pokémon GO friend-QR's, event-check-in-flows, BeReal's
+in-het-moment-principe).
+
+**Bestaand dat niet mag breken**: award-flow via persoon-kiezer, dagbudget, alle
+geloofwaardigheidsregels, bestaande tests.
+
+**Spec (exacte waarden — nieuwe constants):**
+- `QR_TOKEN_TTL_MIN: 10` — een claim-token verloopt na 10 minuten (kort venster =
+  scherm-screenshot doorsturen is zinloos), en is strikt éénmalig.
+- `QR_BONUS: 0.2` — een geclaimde QR-award krijgt +0.2 op de geloofwaardigheid
+  (basis 0.5 + 0.2 = 0.7 → start al op "Ooggetuige bevestigd"); kaart toont
+  "🤝 In persoon overhandigd".
+- Dagbudget: het aanmaken van een QR-token telt mee in het budget van 5
+  (openstaande tokens + gegeven awards vandaag); verlopen tokens geven het
+  budget automatisch terug.
+- Claim-regels: claimer moet ingelogd zijn (of registreert ter plekke), claimer ≠
+  gever (403 met nette melding), token onbekend/verlopen/gebruikt → specifieke
+  foutpagina per geval.
+- Data: tabel `award_tokens` (token PK, giver_id, badge_id, citation, created_at,
+  expires_at, claimed_award_id NULL). QR-inhoud: absolute claim-URL `/claim/<token>`.
+- QR-rendering: `qrcode` npm-package (puur JS, geen externe calls at runtime).
+- UI: award-modal krijgt bij stap 1 een keuze "👤 Kies persoon" / "📱 Via QR".
+  In QR-modus: alleen badge + citatie (getuigen overbodig — het ís al in persoon);
+  na aanmaken toont de modal de QR + resterende geldigheid en pollt op claim-status;
+  bij claim: "Geclaimd door {naam}! 🎉" + stempel-animatie in de feed.
+- Notificatie aan de gever bij claim.
+
+**Acceptatie (binair):** (a) token claimen op tweede ingelogde sessie zet de badge
+op de plank van de claimer met "🤝 In persoon overhandigd" en tier ≥ "Ooggetuige
+bevestigd"; (b) tweede claim van hetzelfde token → foutpagina "al gebruikt";
+(c) claim door de gever zelf → 403; (d) verlopen token → foutpagina "verlopen" en
+budget-teruggave; (e) bestaande unit-tests + e2e blijven groen.

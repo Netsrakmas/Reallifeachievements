@@ -61,7 +61,14 @@ function dailyRemaining(db, userId) {
   const used = db.prepare(
     `SELECT COUNT(*) AS n FROM awards WHERE giver_id = ? AND substr(created_at, 1, 10) = ?`
   ).get(userId, today).n;
-  return Math.max(0, C.DAILY_AWARD_CAP - used);
+  // Openstaande QR-tokens tellen mee; verlopen of geclaimde geven het budget terug
+  // (een claim wordt een award en telt dan via de query hierboven).
+  const openTokens = db.prepare(`
+    SELECT COUNT(*) AS n FROM award_tokens
+    WHERE giver_id = ? AND substr(created_at, 1, 10) = ?
+      AND claimed_award_id IS NULL AND expires_at > ?
+  `).get(userId, today, nowIso()).n;
+  return Math.max(0, C.DAILY_AWARD_CAP - used - openTokens);
 }
 
 function softBanned(db, userId) {
@@ -70,7 +77,7 @@ function softBanned(db, userId) {
 }
 
 // Award aanmaken met alle regels. Gooit Error met .status en nette NL-melding.
-function createAward(db, { giverId, recipientId, badgeSlug, citation, witnessIds = [], photoPath = null, photoLate = 0, createdAt = null }) {
+function createAward(db, { giverId, recipientId, badgeSlug, citation, witnessIds = [], photoPath = null, photoLate = 0, inPerson = 0, viaToken = false, createdAt = null }) {
   const fail = (status, message) => { const e = new Error(message); e.status = status; return e; };
 
   const giver = db.prepare(`SELECT * FROM users WHERE id = ?`).get(giverId);
@@ -85,15 +92,15 @@ function createAward(db, { giverId, recipientId, badgeSlug, citation, witnessIds
   const text = (citation || '').trim();
   if (text.length < C.CITATION_MIN) throw fail(400, `Schrijf een citatie van minstens ${C.CITATION_MIN} tekens — het verhaal is de helft van de badge.`);
   if (text.length > C.CITATION_MAX) throw fail(400, `Houd de citatie onder ${C.CITATION_MAX} tekens.`);
-  if (!giver.is_system) {
+  if (!giver.is_system && !viaToken) {
     if (softBanned(db, giverId)) throw fail(429, 'Je kunt tijdelijk geen badges toekennen. Probeer het later opnieuw.');
     if (dailyRemaining(db, giverId) <= 0) throw fail(429, 'Je pluimen zijn op voor vandaag — morgen weer 5.');
   }
 
   const info = db.prepare(`
-    INSERT INTO awards (badge_id, giver_id, recipient_id, citation, photo_path, photo_late, created_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-  `).run(badge.id, giverId, recipientId, text, photoPath, photoLate ? 1 : 0, createdAt || nowIso());
+    INSERT INTO awards (badge_id, giver_id, recipient_id, citation, photo_path, photo_late, in_person, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(badge.id, giverId, recipientId, text, photoPath, photoLate ? 1 : 0, inPerson ? 1 : 0, createdAt || nowIso());
   const awardId = info.lastInsertRowid;
 
   for (const wid of witnessIds) {
@@ -182,6 +189,7 @@ function awardView(db, award, viewerId = null) {
   const credibility = cred.awardCredibility({
     witnessCount: witnesses.length,
     timelyPhoto: !!award.photo_path && !award.photo_late,
+    inPerson: !!award.in_person,
   });
   const reactions = db.prepare(`
     SELECT emoji, COUNT(*) AS n, SUM(user_id = ?) AS mine
@@ -193,6 +201,7 @@ function awardView(db, award, viewerId = null) {
   return {
     id: award.id, created_at: award.created_at, citation: award.citation,
     status: award.status, photo_path: award.photo_path, photo_late: !!award.photo_late,
+    in_person: !!award.in_person,
     badge: { slug: badge.slug, naam: badge.naam, emoji: badge.emoji, rarity: badge.rarity, categorie: badge.categorie },
     giver, recipient,
     witnesses: witnesses.map(w => w.display_name),
@@ -255,6 +264,59 @@ function badgeShelf(db, userId) {
     GROUP BY b.id ORDER BY MAX(a.created_at) DESC
   `).all(userId);
   return rows.map(r => ({ ...r, level: cred.badgeLevel(r.n) }));
+}
+
+// ---- QR-overhandiging -----------------------------------------------------
+
+// Token aanmaken: consumeert direct dagbudget (verlopen tokens geven het terug).
+function createToken(db, { giverId, badgeSlug, citation, token }) {
+  const fail = (status, message) => { const e = new Error(message); e.status = status; return e; };
+  const badge = db.prepare(`SELECT * FROM badges WHERE slug = ?`).get(badgeSlug);
+  if (!badge) throw fail(404, 'Kies eerst een badge uit de catalogus.');
+  if (badge.is_secret || badge.is_auto) throw fail(403, 'Deze badge kent alleen de Pluimenraad toe.');
+  const text = (citation || '').trim();
+  if (text.length < C.CITATION_MIN) throw fail(400, `Schrijf een citatie van minstens ${C.CITATION_MIN} tekens — het verhaal is de helft van de badge.`);
+  if (text.length > C.CITATION_MAX) throw fail(400, `Houd de citatie onder ${C.CITATION_MAX} tekens.`);
+  if (softBanned(db, giverId)) throw fail(429, 'Je kunt tijdelijk geen badges toekennen. Probeer het later opnieuw.');
+  if (dailyRemaining(db, giverId) <= 0) throw fail(429, 'Je pluimen zijn op voor vandaag — morgen weer 5.');
+  const expiresAt = new Date(Date.now() + C.QR_TOKEN_TTL_MIN * 60000).toISOString();
+  db.prepare(`
+    INSERT INTO award_tokens (token, giver_id, badge_id, citation, expires_at) VALUES (?, ?, ?, ?, ?)
+  `).run(token, giverId, badge.id, text, expiresAt);
+  return { token, badge, expiresAt };
+}
+
+// Status van een token voor de claim-pagina: 'unknown' | 'used' | 'expired' | 'open'
+function tokenState(db, token) {
+  const row = db.prepare(`
+    SELECT t.*, b.slug AS badge_slug, b.naam, b.emoji, b.rarity, b.categorie, b.beschrijving,
+           u.username AS giver_username, u.display_name AS giver_name, u.avatar_emoji AS giver_avatar
+    FROM award_tokens t JOIN badges b ON b.id = t.badge_id JOIN users u ON u.id = t.giver_id
+    WHERE t.token = ?
+  `).get(token);
+  if (!row) return { state: 'unknown' };
+  if (row.claimed_award_id) return { state: 'used', row };
+  if (row.expires_at <= nowIso()) return { state: 'expired', row };
+  return { state: 'open', row };
+}
+
+// Claim: maakt de award aan met in_person-bonus; token is daarna verbruikt.
+function claimToken(db, { token, claimerId }) {
+  const fail = (status, message) => { const e = new Error(message); e.status = status; return e; };
+  const { state, row } = tokenState(db, token);
+  if (state === 'unknown') throw fail(404, 'Deze QR-code is niet (meer) geldig.');
+  if (state === 'used') throw fail(410, 'Deze QR-code is al gebruikt — een badge claim je maar één keer.');
+  if (state === 'expired') throw fail(410, 'Deze QR-code is verlopen. Vraag om een nieuwe.');
+  if (row.giver_id === claimerId) throw fail(403, 'Je kunt je eigen QR-code niet claimen. Zo werkt roem niet.');
+  const award = createAward(db, {
+    giverId: row.giver_id, recipientId: claimerId, badgeSlug: row.badge_slug,
+    citation: row.citation, inPerson: 1, viaToken: true,
+  });
+  db.prepare(`UPDATE award_tokens SET claimed_award_id = ? WHERE token = ?`).run(award.id, token);
+  const claimer = db.prepare(`SELECT display_name FROM users WHERE id = ?`).get(claimerId);
+  notify(db, row.giver_id, 'qr_claimed', award.id,
+    `${claimer.display_name} claimde je QR-badge "${row.naam}" 🤝`);
+  return award;
 }
 
 // ---- notificaties ---------------------------------------------------------
@@ -416,5 +478,6 @@ module.exports = {
   nowIso, daysBetween, systemUser, isProbation, mutualFriendCount,
   giverCredValue, giverReliability, dailyRemaining, softBanned,
   createAward, addStance, recalcStatus, awardView, awardPoints,
+  createToken, tokenState, claimToken,
   userScores, badgeShelf, notify, checkAutoBadges, longestDailyStreak,
 };
