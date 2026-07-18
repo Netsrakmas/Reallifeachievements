@@ -11,6 +11,9 @@ const V = require('./views');
 
 const db = open();
 const app = express();
+// Achter een reverse proxy (Fly/Render/Caddy/nginx) klopt req.protocol dan met
+// X-Forwarded-Proto, zodat QR-claim-URL's https gebruiken.
+app.set('trust proxy', 1);
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json({ limit: '6mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -406,8 +409,9 @@ app.post('/api/profile', requireApi, (req, res) => {
 
 // ---- start -----------------------------------------------------------------
 
-const server = app.listen(C.PORT, () => {
-  console.log(`Pluim & Duivel draait op http://localhost:${C.PORT}`);
+const port = Number(process.env.PORT) || C.PORT;
+const server = app.listen(port, () => {
+  console.log(`Pluim & Duivel draait op http://localhost:${port}`);
   console.log('Inloggen: jesse / demo123 (of een van de andere demo-accounts)');
 });
 module.exports = { app, server, db };
