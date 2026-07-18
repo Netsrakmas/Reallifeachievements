@@ -395,7 +395,7 @@ function awardModal(remaining) {
       </div>
 
       <div class="hidden" id="qr-result" aria-live="polite" style="text-align:center">
-        <div id="qr-svg" style="background:var(--ink);border-radius:var(--radius-lg);padding:var(--s3);display:inline-block;max-width:280px;margin-top:var(--s2)"></div>
+        <div id="qr-svg" style="background:#FFFFFF;border:2px solid var(--ink);border-radius:var(--radius-lg);padding:var(--s3);display:inline-block;max-width:280px;margin-top:var(--s2);box-shadow:var(--shadow-soft)"></div>
         <p class="muted" style="font-size:14px">Laat scannen met de telefooncamera ·
           nog <strong class="mono" id="qr-countdown"></strong> geldig</p>
         <p class="mono" style="font-size:12px;word-break:break-all" id="qr-url"></p>

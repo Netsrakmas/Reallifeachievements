@@ -104,21 +104,31 @@ module.exports = {
 
 ## 5. Stijlbijbel
 
-**Stijlanker**: *"een padvinders-verdienstenboekje uit 1962, gedrukt op donkergroen linnen,
-overgenomen door een studentenvereniging"* — officiële heraldiek, gouden randjes,
-dodelijk serieuze typografie, absurde inhoud. NIET: corporate, pastel, startup-landing.
+**Stijlanker** (herzien op verzoek, 2026-07-18): *"een modern stickerboek in speels
+neo-brutalisme: warm beige papier, vette gele stickers, dikke inktlijnen en harde
+slagschaduwen"* — vierkante blokken met royale ronde hoeken, alles voelt tastbaar
+als een sticker die je kunt lostrekken. Denk Duolingo-speelsheid × neo-brutalistische
+snijranden. NIET: corporate, wishy-washy pastel, dunne haarlijntjes.
 
 **Kleurtokens** (CSS-variabelen, nergens hardgecodeerde kleuren):
 
 ```css
---bg:       #14201A;  /* flesgroen linnen — dominante achtergrond */
---surface:  #1F2E26;  /* kaarten/panelen */
---ink:      #F0EAD8;  /* gebroken wit, "gedrukte inkt" */
---ink-dim:  #9DAA9E;  /* secundaire tekst */
---gold:     #E9B44C;  /* badge-goud — primair accent, knoppen, randen */
---halo:     #8CC7A1;  /* pluim-groen — goede daden 😇 */
---mischief: #E4626F;  /* duivel-rood — ondeugende daden 😈 */
+--bg:        #F1EAD8;  /* warm beige papier — dominante achtergrond */
+--surface:   #FDFAF1;  /* kaarten/stickers — bijna-wit crème */
+--surface-2: #F3EDDC;  /* chips, skeletons, secundaire vlakken */
+--ink:       #221D10;  /* warme near-black inkt — tekst én dikke randen */
+--ink-dim:   #6A6252;  /* secundaire tekst */
+--geel:      #FFC421;  /* hét accent — knoppen, highlights (inkt-tekst erop) */
+--geel-deep: #8F6700;  /* geel als tékstkleur op licht (contrast-veilig) */
+--halo:      #23704A;  /* pluim-groen — goede daden 😇 */
+--mischief:  #C13A47;  /* duivel-rood — ondeugd 😈 */
 ```
+
+**Vorm & diepte**: kaarten = vierkante blokken, radius 16 px, rand 2 px `--ink`,
+harde slagschaduw `4px 4px 0` in inkt (geen blur — stickers, geen zweefkaarten).
+Interactieve elementen (knoppen, FAB, modal) krijgen een vollere schaduw en
+schuiven 2 px in bij :active. Badge-emblemen worden **afgeronde vierkanten**
+(radius ~30%) i.p.v. cirkels — rand = rarity-kleur, legendarisch met gele glow.
 
 **Typografie** (Google Fonts, lokaal gehost of via link): display **Fraunces**
 (gewicht 900, voor badge-namen en koppen — old-book chunky), body **Karla** (400/700),
