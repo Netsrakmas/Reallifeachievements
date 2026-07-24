@@ -104,31 +104,34 @@ module.exports = {
 
 ## 5. Stijlbijbel
 
-**Stijlanker** (herzien op verzoek, 2026-07-18): *"een modern stickerboek in speels
-neo-brutalisme: warm beige papier, vette gele stickers, dikke inktlijnen en harde
-slagschaduwen"* — vierkante blokken met royale ronde hoeken, alles voelt tastbaar
-als een sticker die je kunt lostrekken. Denk Duolingo-speelsheid × neo-brutalistische
-snijranden. NIET: corporate, wishy-washy pastel, dunne haarlijntjes.
+**Stijlanker** (herzien op verzoek, 2026-07-24, "Claude"-look): *"een verzorgd,
+warm archief van daden: crème papier, klei-koraal accent, elegante serif-koppen,
+zachte schaduwen"* — premium en rustig, maar nog steeds speels via de emoji-badges.
+Afgeronde vierkante kaarten (ronde hoeken behouden op verzoek), haarfijne warme
+randen i.p.v. dikke inktlijnen, zachte diepte i.p.v. harde stickerschaduwen.
+NIET: corporate SaaS, felle neon, dunne grijze haarlijntjes op wit.
 
 **Kleurtokens** (CSS-variabelen, nergens hardgecodeerde kleuren):
 
 ```css
---bg:        #F1EAD8;  /* warm beige papier — dominante achtergrond */
---surface:   #FDFAF1;  /* kaarten/stickers — bijna-wit crème */
---surface-2: #F3EDDC;  /* chips, skeletons, secundaire vlakken */
---ink:       #221D10;  /* warme near-black inkt — tekst én dikke randen */
---ink-dim:   #6A6252;  /* secundaire tekst */
---geel:      #FFC421;  /* hét accent — knoppen, highlights (inkt-tekst erop) */
---geel-deep: #8F6700;  /* geel als tékstkleur op licht (contrast-veilig) */
---halo:      #23704A;  /* pluim-groen — goede daden 😇 */
---mischief:  #C13A47;  /* duivel-rood — ondeugd 😈 */
+--bg:         #F5F0E8;  /* warm crème papier — dominante achtergrond */
+--surface:    #FCFAF6;  /* kaarten — warme bijna-wit */
+--surface-2:  #F0EADF;  /* chips, skeletons, secundaire vlakken */
+--ink:        #2B2620;  /* warme near-black inkt */
+--ink-dim:    #6B6459;  /* secundaire tekst */
+--accent:     #B8502F;  /* klei-koraal — knoppen (witte tekst erop, ~4.95:1) */
+--accent-deep:#9A4426;  /* koraal als tékstkleur op licht (contrast-veilig) */
+--halo:       #2E7256;  /* pluim-groen — goede daden 😇 */
+--mischief:   #B0416A;  /* duivel-berry — ondeugd 😈 */
 ```
 
-**Vorm & diepte**: kaarten = vierkante blokken, radius 16 px, rand 2 px `--ink`,
-harde slagschaduw `4px 4px 0` in inkt (geen blur — stickers, geen zweefkaarten).
-Interactieve elementen (knoppen, FAB, modal) krijgen een vollere schaduw en
-schuiven 2 px in bij :active. Badge-emblemen worden **afgeronde vierkanten**
-(radius ~30%) i.p.v. cirkels — rand = rarity-kleur, legendarisch met gele glow.
+**Vorm & diepte**: kaarten = afgeronde vierkanten, radius 14–18 px, haarfijne warme
+rand 1 px `rgba(43,38,32,.12)`, zachte schaduw `0 6px 20px rgba(43,38,32,.08)`
+(blur — zwevend papier, geen harde sticker). Knoppen: koraal met witte tekst,
+zachte lift bij hover, lichte druk bij :active. Badge-emblemen blijven **afgeronde
+vierkanten** — rand = rarity-kleur, legendarisch met zachte koraal-gloed. Serif
+(Fraunces) voor koppen en badge-namen, mono (IBM Plex Mono) voor labels/punten
+geeft het een "gecureerd archief"-karakter.
 
 **Typografie** (Google Fonts, lokaal gehost of via link): display **Fraunces**
 (gewicht 900, voor badge-namen en koppen — old-book chunky), body **Karla** (400/700),
