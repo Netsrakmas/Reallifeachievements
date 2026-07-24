@@ -4,7 +4,17 @@ Een multi-user web-app waarin echte mensen elkaar badges toekennen voor daden in
 echte leven: goede daden (een pluim 😇) én ondeugende daden (een duiveltje 😈).
 Jezelf een badge geven kan niet — roem moet je gegund worden.
 
-## Starten
+## Twee smaken
+
+1. **Volledige app** (server + database, multi-user tussen apparaten) — zie "Starten" hieronder.
+2. **Statische prototype** (`docs/index.html`) — volledig client-side met
+   localStorage, hostbaar op GitHub Pages zónder server. Handig om rond te laten
+   zien en te spelen op één apparaat. Bouwen: `node build-static.js`. Data blijft
+   per browser bewaard (geen deling tussen telefoons — dat vereist de server-versie).
+   Publiceren op Pages: zet **Settings → Pages → Source = GitHub Actions**; de
+   workflow in `.github/workflows/pages.yml` deployt `docs/` automatisch.
+
+## Starten (volledige app)
 
 ```bash
 npm install
