@@ -104,34 +104,37 @@ module.exports = {
 
 ## 5. Stijlbijbel
 
-**Stijlanker** (herzien op verzoek, 2026-07-24, "Claude"-look): *"een verzorgd,
-warm archief van daden: crème papier, klei-koraal accent, elegante serif-koppen,
-zachte schaduwen"* — premium en rustig, maar nog steeds speels via de emoji-badges.
-Afgeronde vierkante kaarten (ronde hoeken behouden op verzoek), haarfijne warme
-randen i.p.v. dikke inktlijnen, zachte diepte i.p.v. harde stickerschaduwen.
-NIET: corporate SaaS, felle neon, dunne grijze haarlijntjes op wit.
+**Stijlanker** (herzien op verzoek, 2026-07-24, "moderne app/OS"-look): *"een strakke,
+moderne app zoals iOS/Android/Duolingo/BeReal: licht en clean, systeem-typografie,
+één zelfverzekerd accent, tastbare afgeronde vlakken"* — eigen identiteit via een
+indigo/violet merkkleur, een groen↔roze goed/ondeugd-duo, en **badge-emblemen als
+app-icoontjes** (squircle, sterk afgeronde vierkanten). GEEN serif (geen Times-New-
+Roman-gevoel), GEEN mono-"archief"-look, GEEN bloem als geef-icoon (vervangen door 🏅).
+
+**Typografie**: uitsluitend het systeem-lettertype (`-apple-system, "Segoe UI",
+Roboto, …`) — precies wat iOS/Windows/Android zelf tonen. Koppen op gewicht 800 met
+strakke letter-spacing; labels op gewicht 700 met lichte uppercase-tracking; cijfers
+`tabular-nums`. Nul webfont-downloads.
 
 **Kleurtokens** (CSS-variabelen, nergens hardgecodeerde kleuren):
 
 ```css
---bg:         #F5F0E8;  /* warm crème papier — dominante achtergrond */
---surface:    #FCFAF6;  /* kaarten — warme bijna-wit */
---surface-2:  #F0EADF;  /* chips, skeletons, secundaire vlakken */
---ink:        #2B2620;  /* warme near-black inkt */
---ink-dim:    #6B6459;  /* secundaire tekst */
---accent:     #B8502F;  /* klei-koraal — knoppen (witte tekst erop, ~4.95:1) */
---accent-deep:#9A4426;  /* koraal als tékstkleur op licht (contrast-veilig) */
---halo:       #2E7256;  /* pluim-groen — goede daden 😇 */
---mischief:   #B0416A;  /* duivel-berry — ondeugd 😈 */
+--bg:         #F2F3F7;  /* koel licht grijs — OS-achtergrond */
+--surface:    #FFFFFF;  /* kaarten — clean wit */
+--surface-2:  #EBECF2;  /* chips, skeletons, secundaire vlakken */
+--ink:        #16161C;  /* near-black tekst */
+--ink-dim:    #6B6B78;  /* secundaire tekst */
+--accent:     #5B57E8;  /* indigo — merk/knoppen (witte tekst, 5.3:1) */
+--accent-deep:#4B47D0;  /* indigo als tékstkleur op licht (6.9:1) */
+--halo:       #0F7D3E;  /* groen — goede daden 😇 */
+--mischief:   #D42B4C;  /* roze-rood — ondeugd 😈 */
 ```
 
-**Vorm & diepte**: kaarten = afgeronde vierkanten, radius 14–18 px, haarfijne warme
-rand 1 px `rgba(43,38,32,.12)`, zachte schaduw `0 6px 20px rgba(43,38,32,.08)`
-(blur — zwevend papier, geen harde sticker). Knoppen: koraal met witte tekst,
-zachte lift bij hover, lichte druk bij :active. Badge-emblemen blijven **afgeronde
-vierkanten** — rand = rarity-kleur, legendarisch met zachte koraal-gloed. Serif
-(Fraunces) voor koppen en badge-namen, mono (IBM Plex Mono) voor labels/punten
-geeft het een "gecureerd archief"-karakter.
+**Vorm & diepte**: kaarten radius 20 px, wit, haarlijn `rgba(22,22,28,.10)`, zachte
+diffuse schaduw `0 4px 16px rgba(22,22,28,.08)` — iOS-kaartgevoel. Knoppen: pill,
+indigo met witte tekst, lichte druk bij :active. Badge-emblemen = **squircle
+app-icoontjes** (radius ~34%), rand = rarity-kleur, legendarisch met indigo-gloed.
+Rarity altijd óók als tekstlabel.
 
 **Typografie** (Google Fonts, lokaal gehost of via link): display **Fraunces**
 (gewicht 900, voor badge-namen en koppen — old-book chunky), body **Karla** (400/700),

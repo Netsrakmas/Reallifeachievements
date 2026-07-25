@@ -35,7 +35,7 @@ function layout({ user, title, active = '', content, unread = 0, remaining = nul
           <div class="notif-panel hidden" id="notif-panel" aria-live="polite"></div>
         </div>
         <a href="/u/${esc(user.username)}" class="${active === 'profiel' ? 'active' : ''}" aria-label="Mijn profiel">${esc(user.avatar_emoji)} ${esc(user.display_name)}</a>
-        <button class="btn" id="open-award-btn">🏵️ Ken badge toe</button>
+        <button class="btn" id="open-award-btn">🏅 Ken badge toe</button>
         <form method="post" action="/logout" style="margin:0"><button class="btn btn-quiet" type="submit">Uitloggen</button></form>
       </div>
     </nav>` : '';
@@ -45,8 +45,7 @@ function layout({ user, title, active = '', content, unread = 0, remaining = nul
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${esc(title)} · Pluim &amp; Duivel</title>
-  <link rel="icon" href="data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="80" font-size="80">🏵️</text></svg>')}">
-  <link rel="stylesheet" href="/fonts/fonts.css">
+  <link rel="icon" href="data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="80" font-size="80">🏅</text></svg>')}">
   <link rel="stylesheet" href="/style.css">
 </head>
 <body data-poll-ms="${C.POLL_MS}">
@@ -117,7 +116,7 @@ function awardCard(v, { stamped = false } = {}) {
 function feedPage({ views }) {
   const cards = views.length
     ? views.map(v => awardCard(v)).join('\n')
-    : `<div class="empty-state card"><div class="big">🏵️</div>
+    : `<div class="empty-state card"><div class="big">🏅</div>
         <p>Nog geen daden verricht. De geschiedenis wacht.</p>
         <button class="btn" id="empty-award-btn">Ken de eerste badge toe</button></div>`;
   return `
@@ -241,7 +240,7 @@ function badgeDetailPage({ badge, timesAwarded, recentViews }) {
       <p class="citation">${esc(badge.beschrijving)}</p>
       <p class="muted mono">${timesAwarded}× toegekend</p>
       ${badge.is_auto ? '<p class="muted">Deze badge kent alleen de Pluimenraad toe — automatisch, bij bewezen verdienste.</p>'
-        : `<button class="btn" data-preselect-badge="${esc(badge.slug)}">🏵️ Ken deze badge toe</button>`}
+        : `<button class="btn" data-preselect-badge="${esc(badge.slug)}">🏅 Ken deze badge toe</button>`}
     </div>
   </div>
   <h2 class="reveal">Recente ontvangers</h2>
@@ -279,7 +278,7 @@ function profilePage({ profile, isOwn, scores, shelf, recentViews, reliability, 
   <div class="stat-row reveal">
     <div class="stat"><div class="num goed">${scores.goed}</div><div class="lbl">😇 Pluim-score</div></div>
     <div class="stat"><div class="num ondeugd">${scores.ondeugd}</div><div class="lbl">😈 Duivel-score</div></div>
-    <div class="stat"><div class="num">${shelf.length}</div><div class="lbl">🏵️ Badges</div></div>
+    <div class="stat"><div class="num">${shelf.length}</div><div class="lbl">🏅 Badges</div></div>
     <div class="stat"><div class="num">${Math.round(reliability.ratio * 100)}%</div><div class="lbl">🔎 Awards bevestigd</div></div>
   </div>
   <p class="muted" style="font-size:14px">De betrouwbaarheidsscore telt hoe vaak badges die ${isOwn ? 'jij toekent' : `${esc(profile.display_name)} toekent`} door getuigen worden bevestigd.</p>
@@ -418,7 +417,7 @@ function awardModal(remaining) {
       </div>
 
       <p style="display:flex;gap:var(--s2);margin-top:var(--s4)">
-        <button class="btn" id="award-submit">🏵️ Ken toe</button>
+        <button class="btn" id="award-submit">🏅 Ken toe</button>
         <button class="btn btn-quiet" id="award-cancel" type="button">Annuleer</button>
       </p>
     </div>
