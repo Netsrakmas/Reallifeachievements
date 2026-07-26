@@ -99,14 +99,20 @@ border:1px solid var(--line-strong);border-radius:999px;padding:4px 10px;color:v
 font-size:13px;font-weight:600;padding:8px 12px;min-height:40px;cursor:pointer;font-family:var(--font)}
 .rb.mine{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-deep)}
 .meta{font-size:13px;color:var(--ink-dim);margin-top:6px}
-nav.tabs{position:fixed;bottom:0;left:0;right:0;z-index:40;display:flex;
-border-top:1px solid var(--line);background:rgba(255,255,255,.9);backdrop-filter:blur(12px)}
-nav.tabs button{flex:1;background:none;border:none;color:var(--ink-dim);font-family:var(--font);
-font-weight:600;font-size:13px;padding:10px 4px calc(10px + env(safe-area-inset-bottom));cursor:pointer;min-height:56px}
-nav.tabs button.on{color:var(--accent-deep)}
-nav.tabs .ico{display:block;font-size:20px}
-.fab{position:fixed;right:var(--s3);bottom:76px;z-index:41;border-radius:999px;
-padding:14px 20px;font-size:16px;box-shadow:var(--sh-lift)}
+.tabbar{position:fixed;bottom:0;left:0;right:0;z-index:40;display:flex;align-items:center;
+padding-bottom:env(safe-area-inset-bottom);
+border-top:1px solid var(--line);background:rgba(255,255,255,.92);backdrop-filter:blur(14px)}
+.tabbar-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+background:none;border:none;color:var(--ink-dim);font-family:var(--font);
+font-weight:600;font-size:11px;padding:9px 2px;cursor:pointer;min-height:56px}
+.tabbar-item svg{width:24px;height:24px}
+.tabbar-item.on{color:var(--accent)}
+.tabbar-give{flex:0 0 auto;display:flex;align-items:center;justify-content:center;
+width:52px;height:52px;margin:-14px 6px 0;border-radius:18px;
+background:var(--accent);color:#fff;border:3px solid var(--surface);cursor:pointer;
+box-shadow:var(--sh-lift)}
+.tabbar-give svg{width:26px;height:26px}
+.tabbar-give:active{transform:scale(.94)}
 .backdrop{position:fixed;inset:0;background:rgba(22,22,28,.4);backdrop-filter:blur(4px);z-index:60;display:flex;
 align-items:flex-end;justify-content:center}
 .sheet{background:var(--surface);border:1px solid var(--line);border-bottom:none;border-radius:var(--rl) var(--rl) 0 0;
@@ -141,6 +147,11 @@ padding:var(--s2) var(--s3);box-shadow:var(--sh)}
 .stat .n{font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 .stat .n.g{color:var(--halo)}.stat .n.o{color:var(--mischief)}
 .stat .l{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-dim)}
+.rankrow{display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--line)}
+.rankrow:last-child{border-bottom:none}
+.rankpos{font-weight:800;font-variant-numeric:tabular-nums;color:var(--ink-dim);min-width:22px;text-align:center}
+.rankname{flex:1;font-weight:600}
+.rankpts{font-weight:800;font-variant-numeric:tabular-nums;color:var(--accent-deep)}
 .empty{text-align:center;padding:var(--s4);color:var(--ink-dim)}
 .empty .big{font-size:36px}
 .note{font-size:13px;color:var(--ink-dim);border:1px solid var(--line);border-radius:var(--r);padding:var(--s2) var(--s3);margin-bottom:var(--s3);background:var(--surface)}
@@ -168,11 +179,26 @@ color:var(--ink-dim);font-family:var(--font);font-weight:700;font-size:13px;padd
   <div id="view"></div>
 </div>
 
-<button class="btn fab" id="fab">🏅 Ken badge toe</button>
-<nav class="tabs" aria-label="Hoofdnavigatie">
-  <button data-tab="feed" class="on"><span class="ico">📜</span>Feed</button>
-  <button data-tab="cat"><span class="ico">🏅</span>Catalogus</button>
-  <button data-tab="prof"><span class="ico">🎖️</span>Profiel</button>
+<nav class="tabbar" aria-label="Hoofdnavigatie">
+  <button class="tabbar-item on" data-tab="feed" aria-label="Feed">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.7 12 3l9 7.7"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/></svg>
+    <span>Feed</span>
+  </button>
+  <button class="tabbar-item" data-tab="cat" aria-label="Catalogus">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.8"/><rect x="14" y="3" width="7" height="7" rx="1.8"/><rect x="3" y="14" width="7" height="7" rx="1.8"/><rect x="14" y="14" width="7" height="7" rx="1.8"/></svg>
+    <span>Catalogus</span>
+  </button>
+  <button class="tabbar-give" id="fab" aria-label="Ken badge toe">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+  </button>
+  <button class="tabbar-item" data-tab="rank" aria-label="Ranglijst">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h12v3a6 6 0 0 1-12 0V4Z"/><path d="M6 5H3.5v1A3 3 0 0 0 6 9"/><path d="M18 5h2.5v1A3 3 0 0 1 18 9"/><path d="M12 13v3"/><path d="M8.5 20.5a3.5 3.5 0 0 1 7 0Z"/></svg>
+    <span>Ranglijst</span>
+  </button>
+  <button class="tabbar-item" data-tab="prof" aria-label="Profiel">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0Z"/></svg>
+    <span>Profiel</span>
+  </button>
 </nav>
 
 <div class="backdrop hidden" id="modal">
@@ -388,11 +414,46 @@ function renderProf(){
     + [...AWARDS].filter(a=>a.r===me||a.g===me).sort((x,y)=>y.t-x.t).slice(0,5).map(a=>card(a)).join('');
 }
 
+let rankTab = 'goed';
+function renderRank(){
+  const weekAgo = Date.now() - 7*D;
+  const per = new Map();
+  for (const a of AWARDS){
+    if (a.t < weekAgo || status(a)==='disputed') continue;
+    const b = byS[a.s]; if (!b) continue;
+    const pts = PTS[b.rarity] || 0;
+    const cur = per.get(a.r) || { goed:0, ondeugd:0 };
+    if (b.categorie==='goed') cur.goed += pts;
+    else if (b.categorie==='ondeugd') cur.ondeugd += pts;
+    else { cur.goed += pts/2; cur.ondeugd += pts/2; }
+    per.set(a.r, cur);
+  }
+  const rows = [...per.entries()]
+    .map(([u,s]) => ({ u, pts: Math.round(rankTab==='goed'?s.goed:s.ondeugd) }))
+    .filter(r => r.pts > 0)
+    .sort((x,y)=>y.pts-x.pts);
+  const list = rows.length ? rows.map((r,i) =>
+    '<div class="rankrow"><span class="rankpos">'+(i+1)+'</span>'
+    + '<span class="rankname">'+byU[r.u].a+' '+esc(byU[r.u].n)+(r.u===me?' <span class="muted">(jij)</span>':'')+'</span>'
+    + '<span class="rankpts mono">'+r.pts+'</span></div>').join('')
+    : '<div class="empty"><div class="big">'+(rankTab==='ondeugd'?'😈':'😇')+'</div><p>Deze week nog niemand. De week is jong.</p></div>';
+  view.innerHTML = '<div class="eyebrow">Wekelijkse ranglijst · gewogen naar geloofwaardigheid</div>'
+    + '<h1 class="reveal">Ranglijst</h1>'
+    + '<div class="filters reveal"><button class="fchip'+(rankTab==='goed'?' on':'')+'" data-rank="goed">😇 Engelen</button>'
+    + '<button class="fchip'+(rankTab==='ondeugd'?' on':'')+'" data-rank="ondeugd">😈 Duivels</button></div>'
+    + '<div class="card reveal">'+list+'</div>';
+  view.querySelectorAll('[data-rank]').forEach(b => b.addEventListener('click', () => { rankTab=b.dataset.rank; renderRank(); }));
+}
+
 function render(){
   if (tab==='feed') renderFeed();
   else if (tab==='cat') renderCat();
+  else if (tab==='rank') renderRank();
   else renderProf();
   window.scrollTo(0,0);
+}
+function setActiveTab(t){
+  document.querySelectorAll('.tabbar-item').forEach(x=>x.classList.toggle('on', x.dataset.tab===t));
 }
 
 // ---------- interactie ----------
@@ -415,9 +476,9 @@ document.addEventListener('click', ev => {
   }
 });
 
-document.querySelectorAll('nav.tabs button').forEach(b => b.addEventListener('click', () => {
+document.querySelectorAll('.tabbar-item').forEach(b => b.addEventListener('click', () => {
   tab = b.dataset.tab;
-  document.querySelectorAll('nav.tabs button').forEach(x=>x.classList.toggle('on', x===b));
+  setActiveTab(tab);
   render();
 }));
 
@@ -463,7 +524,7 @@ document.getElementById('qr-sim').addEventListener('click', () => {
   setTimeout(() => {
     modal.classList.add('hidden');
     tab='feed';
-    document.querySelectorAll('nav.tabs button').forEach(x=>x.classList.toggle('on', x.dataset.tab==='feed'));
+    setActiveTab("feed");
     renderFeed();
     const first = view.querySelector('article');
     if (first) { first.classList.remove('reveal'); first.classList.add('stamped'); }
@@ -523,7 +584,7 @@ document.getElementById('msubmit').addEventListener('click', () => {
   save();
   modal.classList.add('hidden');
   tab='feed';
-  document.querySelectorAll('nav.tabs button').forEach(x=>x.classList.toggle('on', x.dataset.tab==='feed'));
+  setActiveTab("feed");
   renderFeed();
   const first = view.querySelector('article');
   if (first) { first.classList.remove('reveal'); first.classList.add('stamped'); }
