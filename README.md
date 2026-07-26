@@ -1,4 +1,4 @@
-# Pluim & Duivel 🏵️ — Real Life Achievements
+# Aura 🏵️ — Real Life Achievements
 
 Een multi-user web-app waarin echte mensen elkaar badges toekennen voor daden in het
 echte leven: goede daden (een pluim 😇) én ondeugende daden (een duiveltje 😈).
@@ -55,7 +55,7 @@ een award van de een verschijnt binnen 8 seconden bij de ander.
 - **Feed** met reacties, **notificaties**, **profielen** met badge-plank en
   betrouwbaarheidsscore, en een **wekelijkse ranglijst** met aparte
   Engelen- en Duivels-tabs (bewust géén eeuwige globale ranglijst).
-- **De Pluimenraad** 🏛️ — de systeemgebruiker die automatische badges toekent
+- **De Aura-raad** 🏛️ — de systeemgebruiker die automatische badges toekent
   (ketens, seizoens- en verzamelmijlpalen, geheime triggers).
 
 ## Commando's

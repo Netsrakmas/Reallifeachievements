@@ -1,4 +1,4 @@
-# Pluim & Duivel online zetten
+# Aura online zetten
 
 De app is één Node-proces met een SQLite-bestand — hij heeft alleen een server
 met een **blijvende schijf** nodig (voor `pluim.db` en de bewijsfoto's).
@@ -23,10 +23,10 @@ op `/data`, regio Frankfurt, health check). Stappen — kan volledig op je telef
 1. Ga naar https://render.com en maak een account (inloggen met GitHub is het
    handigst — dan is de repo-koppeling meteen geregeld).
 2. Dashboard → **New → Blueprint** → kies de repo `netsrakmas/reallifeachievements`.
-3. Render leest `render.yaml` en toont "pluim-en-duivel" → klik **Apply/Deploy**.
+3. Render leest `render.yaml` en toont "aura" → klik **Apply/Deploy**.
 4. Wacht tot de eerste build klaar is (paar minuten; de demo-data wordt bij de
    eerste start automatisch geseed).
-5. Je krijgt een adres als `https://pluim-en-duivel.onrender.com` — dat is de
+5. Je krijgt een adres als `https://aura.onrender.com` — dat is de
    app, voor iedereen met de link. Log in met `jesse` / `demo123` of registreer
    eigen accounts, en deel de URL met je vrienden.
 

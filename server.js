@@ -1,4 +1,4 @@
-// Pluim & Duivel — server. Start met: node server.js
+// Aura — server. Start met: node server.js
 const express = require('express');
 const crypto = require('crypto');
 const QRCode = require('qrcode');
@@ -165,7 +165,7 @@ app.get('/badges/:slug', requirePage, (req, res) => {
   if (!badge) return res.status(404).send(V.layout({ user: req.user, title: 'Niet gevonden', content: '<h1>Deze badge bestaat niet</h1><p><a href="/badges">Terug naar de catalogus</a></p>' }));
   const earned = db.prepare(`SELECT 1 FROM awards WHERE badge_id = ? AND recipient_id = ? LIMIT 1`).get(badge.id, req.user.id);
   if (badge.is_secret && !earned) {
-    return res.status(403).send(V.layout({ user: req.user, title: 'Geheim', content: '<h1>???</h1><p>Deze onderscheiding is geheim. De Pluimenraad doet geen mededelingen.</p><p><a href="/badges">Terug naar de catalogus</a></p>' }));
+    return res.status(403).send(V.layout({ user: req.user, title: 'Geheim', content: '<h1>???</h1><p>Deze onderscheiding is geheim. De Aura-raad doet geen mededelingen.</p><p><a href="/badges">Terug naar de catalogus</a></p>' }));
   }
   const timesAwarded = db.prepare(`SELECT COUNT(*) AS n FROM awards WHERE badge_id = ?`).get(badge.id).n;
   const recent = db.prepare(`SELECT * FROM awards WHERE badge_id = ? ORDER BY created_at DESC LIMIT 5`).all(badge.id);
@@ -411,7 +411,7 @@ app.post('/api/profile', requireApi, (req, res) => {
 
 const port = Number(process.env.PORT) || C.PORT;
 const server = app.listen(port, () => {
-  console.log(`Pluim & Duivel draait op http://localhost:${port}`);
+  console.log(`Aura draait op http://localhost:${port}`);
   console.log('Inloggen: jesse / demo123 (of een van de andere demo-accounts)');
 });
 module.exports = { app, server, db };

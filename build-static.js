@@ -1,4 +1,4 @@
-// Genereert de zelfstandige statische app (docs/index.html) van Pluim & Duivel:
+// Genereert de zelfstandige statische app (docs/index.html) van Aura:
 // fonts als data-URI, badge-catalogus ingebed, interactieve feed/modal/catalogus.
 // Volledig client-side met localStorage-opslag — hostbaar op GitHub Pages of
 // elke statische host, zonder server. Draai met: node build-static.js
@@ -32,8 +32,8 @@ const html = `<!DOCTYPE html>
 <html lang="nl"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Pluim &amp; Duivel</title>
-<link rel="icon" href="data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="82" font-size="82">🏅</text></svg>')}">
+<title>Aura</title>
+<link rel="icon" href="data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="82" font-size="82">✨</text></svg>')}">
 <style>
 /* Stijlbijbel v4: moderne app/OS-look — systeem-font, indigo accent, squircle-badges. */
 :root{--bg:#F2F3F7;--surface:#FFFFFF;--surface-2:#EBECF2;--ink:#16161C;--ink-dim:#6B6B78;
@@ -170,7 +170,7 @@ color:var(--ink-dim);font-family:var(--font);font-weight:700;font-size:13px;padd
 </head><body>
 
 <header class="top">
-  <span class="brand">Pluim &amp; Duivel</span>
+  <span class="brand">Aura</span>
   <label class="muted" for="as" style="font-size:12px;margin:0">Bekijk als</label>
   <select id="as" class="as" aria-label="Bekijk de app als deze gebruiker"></select>
 </header>
@@ -233,7 +233,7 @@ color:var(--ink-dim);font-family:var(--font);font-weight:700;font-size:13px;padd
       <button class="btn btn-ghost" type="button" id="qr-sim">Simuleer: Omar scant hem 📱</button>
     </div>
     <p style="display:flex;gap:var(--s2);margin-top:var(--s3)">
-      <button class="btn" id="msubmit">🏅 Ken toe</button>
+      <button class="btn" id="msubmit">✨ Ken toe</button>
       <button class="btn btn-ghost" id="mcancel">Annuleer</button>
     </p>
   </div>
@@ -253,7 +253,7 @@ const USERS = [
   {u:'omar', n:'Omar', a:'🌵', bio:'Verzamelt ondeugd-badges met lichte trots.'},
   {u:'sanne', n:'Sanne', a:'🚀', bio:'Rent voor elke trein. Haalt de meeste.'},
   {u:'ruben', n:'Ruben', a:'🥸', bio:'Kent de catalogus beter dan zijn agenda.'},
-  {u:'priya', n:'Priya', a:'🦩', bio:'Deelt pluimen uit als confetti.'},
+  {u:'priya', n:'Priya', a:'🦩', bio:'Deelt aura uit als confetti.'},
 ];
 const byU = Object.fromEntries(USERS.map(x=>[x.u,x]));
 const byS = Object.fromEntries(BADGES.map(b=>[b.slug,b]));
@@ -279,7 +279,7 @@ const SEED_AWARDS = [
 ];
 
 // ---------- opslag: alles blijft bewaard in deze browser (geen server) ----------
-const STORE_KEY = 'pluim-duivel-v1';
+const STORE_KEY = 'aura-v1';
 const today = () => new Date().toISOString().slice(0,10);
 let AWARDS, budget = {}, me = 'jesse', tab = 'feed';
 function load(){
@@ -361,8 +361,8 @@ function card(a, stamped){
 
 function renderFeed(){
   const sorted = [...AWARDS].sort((x,y)=>y.t-x.t);
-  view.innerHTML = '<div class="eyebrow">Het officiële register van daden</div><h1 class="reveal">De Feed</h1>'
-    + '<p class="note reveal">Prototype zonder server: je toekenningen blijven bewaard in <em>deze</em> browser (geen deling tussen telefoons — dat vraagt een server). Wissel rechtsboven van gebruiker om het multi-user-effect te spelen. <button id="reset-btn" class="fchip" style="margin-top:6px">↺ Begin opnieuw met de demo-data</button></p>'
+  view.innerHTML = '<div class="eyebrow">Jouw aura · bijgehouden door je vrienden</div><h1 class="reveal">De Feed</h1>'
+    + '<p class="note reveal">Aura-prototype (zonder server): je toekenningen blijven bewaard in <em>deze</em> browser (geen deling tussen telefoons — dat vraagt een server). Wissel rechtsboven van gebruiker om het multi-user-effect te spelen. <button id="reset-btn" class="fchip" style="margin-top:6px">↺ Begin opnieuw met de demo-data</button></p>'
     + sorted.map(a=>card(a)).join('');
   const rb = document.getElementById('reset-btn');
   if (rb) rb.addEventListener('click', () => { if (confirm('Alle badges die je hebt toegekend wissen en teruggaan naar de demo-data?')) resetData(); });
@@ -380,7 +380,7 @@ function renderCat(){
     + ['','goed','ondeugd','neutraal'].map(f=>'<button class="fchip'+(catFilter===f?' on':'')+'" data-f="'+f+'">'+(f===''?'Alles':f==='goed'?'😇 Goed':f==='ondeugd'?'😈 Ondeugd':'⚖️ Neutraal')+'</button>').join('')
     + '</div>'
     + (items.length ? '<div class="grid">'+items.map(b => b.secret
-      ? '<div class="tile"><div class="ring secret">???</div><div><div class="bname">???</div><div class="desc">De Pluimenraad zwijgt.</div></div></div>'
+      ? '<div class="tile"><div class="ring secret">???</div><div><div class="bname">???</div><div class="desc">De Aura-raad zwijgt.</div></div></div>'
       : '<div class="tile">'+ring(b)+'<div><div class="bname">'+esc(b.naam)+'</div><div class="rlabel '+b.rarity+'">'+RNL[b.rarity]+'</div><div class="desc">'+esc(b.beschrijving)+'</div></div></div>').join('')+'</div>'
       : '<div class="empty card"><div class="big">🔍</div><p>Geen badge gevonden met deze filters.</p></div>');
   document.getElementById('cq').addEventListener('input', e => { catQ = e.target.value.trim().toLowerCase(); renderCat(); });
@@ -401,8 +401,8 @@ function renderProf(){
   }
   view.innerHTML = '<div class="eyebrow">Profiel in deze demo</div><h1 class="reveal">'+u.a+' '+esc(u.n)+'</h1>'
     + '<p class="muted reveal">'+esc(u.bio)+'</p>'
-    + '<div class="stats reveal"><div class="stat"><div class="n g">'+Math.round(g)+'</div><div class="l">😇 Pluim</div></div>'
-    + '<div class="stat"><div class="n o">'+Math.round(o)+'</div><div class="l">😈 Duivel</div></div>'
+    + '<div class="stats reveal"><div class="stat"><div class="n g">'+Math.round(g)+'</div><div class="l">✨ +Aura</div></div>'
+    + '<div class="stat"><div class="n o">'+Math.round(o)+'</div><div class="l">💀 −Aura</div></div>'
     + '<div class="stat"><div class="n">'+shelf.size+'</div><div class="l">🏅 Badges</div></div></div>'
     + '<h2>De badge-plank</h2>'
     + (shelf.size ? '<div class="grid">'+[...shelf.entries()].map(([s,n]) => {
@@ -439,8 +439,8 @@ function renderRank(){
     : '<div class="empty"><div class="big">'+(rankTab==='ondeugd'?'😈':'😇')+'</div><p>Deze week nog niemand. De week is jong.</p></div>';
   view.innerHTML = '<div class="eyebrow">Wekelijkse ranglijst · gewogen naar geloofwaardigheid</div>'
     + '<h1 class="reveal">Ranglijst</h1>'
-    + '<div class="filters reveal"><button class="fchip'+(rankTab==='goed'?' on':'')+'" data-rank="goed">😇 Engelen</button>'
-    + '<button class="fchip'+(rankTab==='ondeugd'?' on':'')+'" data-rank="ondeugd">😈 Duivels</button></div>'
+    + '<div class="filters reveal"><button class="fchip'+(rankTab==='goed'?' on':'')+'" data-rank="goed">✨ +Aura</button>'
+    + '<button class="fchip'+(rankTab==='ondeugd'?' on':'')+'" data-rank="ondeugd">💀 −Aura</button></div>'
     + '<div class="card reveal">'+list+'</div>';
   view.querySelectorAll('[data-rank]').forEach(b => b.addEventListener('click', () => { rankTab=b.dataset.rank; renderRank(); }));
 }
@@ -498,7 +498,7 @@ function setMode(qr){
   document.getElementById('qr-explain').classList.toggle('hidden', !qr);
   document.getElementById('wit-section').classList.toggle('hidden', qr);
   document.getElementById('qr-panel').classList.add('hidden');
-  document.getElementById('msubmit').textContent = qr ? '📱 Maak QR-code' : '🏅 Ken toe';
+  document.getElementById('msubmit').textContent = qr ? '📱 Maak QR-code' : '✨ Ken toe';
   document.getElementById('msubmit').classList.remove('hidden');
   if (qrTimer) { clearInterval(qrTimer); qrTimer = null; }
 }
@@ -557,7 +557,7 @@ document.getElementById('msubmit').addEventListener('click', () => {
   const cite = document.getElementById('mcite').value.trim();
   err.classList.add('hidden');
   const fail = m => { err.textContent=m; err.classList.remove('hidden'); };
-  if (budgetLeft() <= 0) return fail('Je pluimen zijn op voor vandaag — morgen weer 5.');
+  if (budgetLeft() <= 0) return fail('Je aura-giften zijn op voor vandaag — morgen weer 5.');
   if (qrMode) {
     if (!selB) return fail('Kies eerst een badge uit de catalogus.');
     if (cite.length < 10) return fail('Schrijf een citatie van minstens 10 tekens — het verhaal is de helft van de badge.');
@@ -601,7 +601,7 @@ const OUT = path.join(__dirname, 'docs', 'index.html');
 fs.mkdirSync(path.dirname(OUT), { recursive: true });
 // De QR verwijst standaard naar de app zelf; overschrijfbaar met SITE_URL zodra
 // je de Pages-URL kent (bijv. SITE_URL=https://naam.github.io/repo node build-static.js).
-const qrTarget = process.env.SITE_URL || 'https://pluim-en-duivel.example/';
+const qrTarget = process.env.SITE_URL || 'https://aura.example/';
 QRCode.toString(qrTarget, { type: 'svg', margin: 1, width: 240 }, (err, svg) => {
   if (err) throw err;
   fs.writeFileSync(OUT, html.replace('__QR_SVG__', svg));

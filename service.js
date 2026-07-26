@@ -87,14 +87,14 @@ function createAward(db, { giverId, recipientId, badgeSlug, citation, witnessIds
   const badge = db.prepare(`SELECT * FROM badges WHERE slug = ?`).get(badgeSlug);
   if (!badge) throw fail(404, 'Kies eerst een badge uit de catalogus.');
   if (!giver.is_system && (badge.is_secret || badge.is_auto)) {
-    throw fail(403, 'Deze badge kent alleen de Pluimenraad toe.');
+    throw fail(403, 'Deze badge kent alleen de Aura-raad toe.');
   }
   const text = (citation || '').trim();
   if (text.length < C.CITATION_MIN) throw fail(400, `Schrijf een citatie van minstens ${C.CITATION_MIN} tekens — het verhaal is de helft van de badge.`);
   if (text.length > C.CITATION_MAX) throw fail(400, `Houd de citatie onder ${C.CITATION_MAX} tekens.`);
   if (!giver.is_system && !viaToken) {
     if (softBanned(db, giverId)) throw fail(429, 'Je kunt tijdelijk geen badges toekennen. Probeer het later opnieuw.');
-    if (dailyRemaining(db, giverId) <= 0) throw fail(429, 'Je pluimen zijn op voor vandaag — morgen weer 5.');
+    if (dailyRemaining(db, giverId) <= 0) throw fail(429, 'Je aura-giften zijn op voor vandaag — morgen weer 5.');
   }
 
   const info = db.prepare(`
@@ -239,7 +239,7 @@ function awardPoints(db, award, at = nowIso()) {
   });
 }
 
-// Pluim- en Duivel-score van een gebruiker (cred-gewogen, met verval).
+// Aura-score van een gebruiker (cred-gewogen, met verval).
 function userScores(db, userId) {
   const awards = db.prepare(`
     SELECT a.*, b.categorie FROM awards a JOIN badges b ON b.id = a.badge_id
@@ -273,12 +273,12 @@ function createToken(db, { giverId, badgeSlug, citation, token }) {
   const fail = (status, message) => { const e = new Error(message); e.status = status; return e; };
   const badge = db.prepare(`SELECT * FROM badges WHERE slug = ?`).get(badgeSlug);
   if (!badge) throw fail(404, 'Kies eerst een badge uit de catalogus.');
-  if (badge.is_secret || badge.is_auto) throw fail(403, 'Deze badge kent alleen de Pluimenraad toe.');
+  if (badge.is_secret || badge.is_auto) throw fail(403, 'Deze badge kent alleen de Aura-raad toe.');
   const text = (citation || '').trim();
   if (text.length < C.CITATION_MIN) throw fail(400, `Schrijf een citatie van minstens ${C.CITATION_MIN} tekens — het verhaal is de helft van de badge.`);
   if (text.length > C.CITATION_MAX) throw fail(400, `Houd de citatie onder ${C.CITATION_MAX} tekens.`);
   if (softBanned(db, giverId)) throw fail(429, 'Je kunt tijdelijk geen badges toekennen. Probeer het later opnieuw.');
-  if (dailyRemaining(db, giverId) <= 0) throw fail(429, 'Je pluimen zijn op voor vandaag — morgen weer 5.');
+  if (dailyRemaining(db, giverId) <= 0) throw fail(429, 'Je aura-giften zijn op voor vandaag — morgen weer 5.');
   const expiresAt = new Date(Date.now() + C.QR_TOKEN_TTL_MIN * 60000).toISOString();
   db.prepare(`
     INSERT INTO award_tokens (token, giver_id, badge_id, citation, expires_at) VALUES (?, ?, ?, ?, ?)
@@ -326,7 +326,7 @@ function notify(db, userId, type, awardId, message) {
     .run(userId, type, awardId, message);
 }
 
-// ---- automatische badges (de Pluimenraad) ---------------------------------
+// ---- automatische badges (de Aura-raad) ---------------------------------
 
 function hasBadge(db, userId, slug) {
   return !!db.prepare(`
@@ -364,8 +364,8 @@ function checkAutoBadges(db, userId, triggerAwardId = null) {
 
   // Keten-badges (drempels 2/16/128; diversiteitseis geldt voor ontvang-ketens)
   const chains = {
-    pluimenjager: organic.filter(a => a.categorie === 'goed').length,
-    duivelspact: organic.filter(a => a.categorie === 'ondeugd').length,
+    aurajager: organic.filter(a => a.categorie === 'goed').length,
+    chaospact: organic.filter(a => a.categorie === 'ondeugd').length,
   };
   const given = db.prepare(`
     SELECT COUNT(*) AS n FROM awards WHERE giver_id = ? AND status != 'disputed'
@@ -380,17 +380,17 @@ function checkAutoBadges(db, userId, triggerAwardId = null) {
   `).get(userId).n;
   const streak = longestDailyStreak(organic.map(a => a.created_at.slice(0, 10)));
   const chainCounts = {
-    pluimenjager: chains.pluimenjager, duivelspact: chains.duivelspact,
+    aurajager: chains.aurajager, chaospact: chains.chaospact,
     vrijgevige: given, ooggetuige: witnessed, feedvedette: reactionsReceived,
     'ketting-van-goud': streak,
   };
   const STEP = ['brons', 'zilver', 'goud'];
   for (const [slug, count] of Object.entries(chainCounts)) {
     C.CHAIN_THRESHOLDS.forEach((threshold, i) => {
-      const needsDiversity = slug === 'pluimenjager' || slug === 'duivelspact';
+      const needsDiversity = slug === 'aurajager' || slug === 'chaospact';
       if (count >= threshold && (!needsDiversity || diverse(threshold))) {
         grantAuto(db, userId, `${slug}-${STEP[i]}`,
-          `De Pluimenraad stelt vast dat ${user.display_name} de drempel van ${threshold} heeft bereikt. Hulde.`, autoAt);
+          `De Aura-raad stelt vast dat ${user.display_name} de drempel van ${threshold} heeft bereikt. Hulde.`, autoAt);
       }
     });
   }
@@ -436,7 +436,7 @@ function checkAutoBadges(db, userId, triggerAwardId = null) {
       const day = trig.created_at.slice(0, 10);
       const cats = new Set(organic.filter(a => a.created_at.slice(0, 10) === day).map(a => a.categorie));
       if (cats.has('goed') && cats.has('ondeugd')) {
-        grantAuto(db, userId, 'dubbelagent', `Op één dag zowel engel als duivel. ${user.display_name} speelt beide kanten.`, autoAt);
+        grantAuto(db, userId, 'dubbelagent', `Op één dag zowel +aura als −aura. ${user.display_name} speelt beide kanten.`, autoAt);
       }
 
       // Eerste Bloed: allereerste ontvanger van deze badge

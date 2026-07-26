@@ -1,4 +1,4 @@
-# PROMPT.md — "Pluim & Duivel" · Real Life Achievements — Master Build Spec
+# PROMPT.md — "Aura" · Real Life Achievements — Master Build Spec
 
 > Dit document is de volledige bouwprompt. Voer het milestone voor milestone uit.
 > Ga nooit door naar de volgende milestone voordat het checkpoint van de huidige slaagt.
@@ -15,7 +15,7 @@ Vermijd dat actief: bouw een onderscheidende, speelse app die verrast.
 Commit aan één samenhangende esthetiek (§5), gebruik CSS-variabelen, en kies
 dominante kleuren met scherpe accenten in plaats van timide, gelijkmatig verdeelde paletten.
 
-**Missie**: bouw *Pluim & Duivel* — een multi-user web-app waarin echte mensen elkaar
+**Missie**: bouw *Aura* — een multi-user web-app waarin echte mensen elkaar
 badges toekennen voor daden in het echte leven. Goede daden (een pluim 😇) én ondeugende
 daden (een duiveltje 😈). Je kunt jezelf nooit een badge geven. De app voelt als een
 padvindershandboek dat is overgenomen door je grappigste vrienden: officieel vormgegeven
@@ -306,8 +306,8 @@ in het páár naam+beschrijving). Categorieën: `goed` (😇 telt voor Pluim-sco
 114. **Scepticus** 🧐 *uncommon* — Plaatste 10 doubts waarvan er 8+ terecht bleken. (automatisch)
 
 ### Keten-badges (chain: brons → zilver → goud, drempels 2/16/128 — GitHub-model)
-115. **Pluimenjager** 😇 *chain* — Ontving {2/16/128} goede-daad-badges.
-116. **Duivelspact** 😈 *chain* — Ontving {2/16/128} ondeugd-badges.
+115. **Aurajager** 😇 *chain* — Ontving {2/16/128} goede-daad-badges.
+116. **Chaospact** 😈 *chain* — Ontving {2/16/128} ondeugd-badges.
 117. **Vrijgevige** 🎁 *chain* — Kende {2/16/128} badges toe die overeind bleven.
 118. **Ooggetuige** 👀 *chain* — Trad {2/16/128} keer op als getuige.
 119. **Feedvedette** 📣 *chain* — Ontving {2/16/128} reacties op eigen awards.
@@ -318,7 +318,7 @@ badge → "Vliegenmepper niv. 2", retroactief berekend uit de award-historie.
 
 ## 7. Schermen & flows (elk interactief element opgesomd — geen dode knoppen)
 
-Navigatie (vast bovenaan): logo "Pluim & Duivel" (→ feed) · Feed · Catalogus ·
+Navigatie (vast bovenaan): logo "Aura" (→ feed) · Feed · Catalogus ·
 Ranglijst · notificatie-bel met ongelezen-teller (→ dropdown) · eigen avatar (→ profiel) ·
 uitloggen. Plus één prominente gouden knop: **"Ken badge toe"** (→ award-modal, overal beschikbaar).
 

@@ -7,7 +7,7 @@ const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
 function open(dbPath) {
-  const db = new Database(dbPath || path.join(DATA_DIR, 'pluim.db'));
+  const db = new Database(dbPath || path.join(DATA_DIR, 'aura.db'));
   db.pragma('journal_mode = WAL');
   db.pragma('busy_timeout = 5000');
   db.pragma('synchronous = NORMAL');

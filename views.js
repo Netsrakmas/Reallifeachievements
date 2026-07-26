@@ -25,7 +25,7 @@ function timeAgo(iso) {
 function layout({ user, title, active = '', content, unread = 0, remaining = null }) {
   const nav = user ? `
     <nav class="nav">
-      <a class="brand" href="/">Pluim &amp; Duivel</a>
+      <a class="brand" href="/">Aura</a>
       <div class="nav-links">
         <a href="/" class="${active === 'feed' ? 'active' : ''}">Feed</a>
         <a href="/badges" class="${active === 'badges' ? 'active' : ''}">Catalogus</a>
@@ -35,7 +35,7 @@ function layout({ user, title, active = '', content, unread = 0, remaining = nul
           <div class="notif-panel hidden" id="notif-panel" aria-live="polite"></div>
         </div>
         <a href="/u/${esc(user.username)}" class="${active === 'profiel' ? 'active' : ''}" aria-label="Mijn profiel">${esc(user.avatar_emoji)} ${esc(user.display_name)}</a>
-        <button class="btn" id="open-award-btn">🏅 Ken badge toe</button>
+        <button class="btn" id="open-award-btn">✨ Ken badge toe</button>
         <form method="post" action="/logout" style="margin:0"><button class="btn btn-quiet" type="submit">Uitloggen</button></form>
       </div>
     </nav>` : '';
@@ -44,8 +44,8 @@ function layout({ user, title, active = '', content, unread = 0, remaining = nul
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>${esc(title)} · Pluim &amp; Duivel</title>
-  <link rel="icon" href="data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="80" font-size="80">🏅</text></svg>')}">
+  <title>${esc(title)} · Aura</title>
+  <link rel="icon" href="data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="80" font-size="80">✨</text></svg>')}">
   <link rel="stylesheet" href="/style.css">
 </head>
 <body data-poll-ms="${C.POLL_MS}">
@@ -120,7 +120,7 @@ function feedPage({ views }) {
         <p>Nog geen daden verricht. De geschiedenis wacht.</p>
         <button class="btn" id="empty-award-btn">Ken de eerste badge toe</button></div>`;
   return `
-  <div class="eyebrow reveal">Het officiële register van daden</div>
+  <div class="eyebrow reveal">Jouw aura · bijgehouden door je vrienden</div>
   <h1 class="reveal">De Feed</h1>
   <div id="feed-error" class="error-state hidden" role="alert">
     <span>De feed kon niet worden ververst.</span>
@@ -134,7 +134,7 @@ function loginPage({ error = null, mode = 'login', values = {}, next = '' } = {}
   return `
   <div style="max-width:420px;margin:8vh auto 0">
     <div class="eyebrow">Sinds heden · officieel register</div>
-    <h1>Pluim &amp; Duivel</h1>
+    <h1>Aura</h1>
     <p class="muted">Verdien badges voor goede daden. En voor de andere soort. Alleen anderen kunnen jou een badge toekennen — roem moet je gegund worden.</p>
     ${error ? `<div class="form-error" role="alert">${esc(error)}</div>` : ''}
     <div class="card">
@@ -176,7 +176,7 @@ function catalogPage({ badges, counts }) {
   const tiles = badges.map(b => {
     const hidden = b.is_secret && !b.earnedByViewer;
     const inner = hidden
-      ? `<div><div class="award-badge-name">???</div><div class="muted" style="font-size:14px">Een geheime onderscheiding. De Pluimenraad zwijgt.</div></div>`
+      ? `<div><div class="award-badge-name">???</div><div class="muted" style="font-size:14px">Een geheime onderscheiding. De Aura-raad zwijgt.</div></div>`
       : `<div>
           <div class="award-badge-name"><a href="/badges/${esc(b.slug)}">${esc(b.naam)}</a></div>
           <div class="rarity-label ${esc(b.rarity)}">${RARITY_NL[b.rarity]}</div>
@@ -239,8 +239,8 @@ function badgeDetailPage({ badge, timesAwarded, recentViews }) {
       <div class="rarity-label ${esc(badge.rarity)}">${RARITY_NL[badge.rarity]} · ${C.RARITY_POINTS[badge.rarity]} punten</div>
       <p class="citation">${esc(badge.beschrijving)}</p>
       <p class="muted mono">${timesAwarded}× toegekend</p>
-      ${badge.is_auto ? '<p class="muted">Deze badge kent alleen de Pluimenraad toe — automatisch, bij bewezen verdienste.</p>'
-        : `<button class="btn" data-preselect-badge="${esc(badge.slug)}">🏅 Ken deze badge toe</button>`}
+      ${badge.is_auto ? '<p class="muted">Deze badge kent alleen de Aura-raad toe — automatisch, bij bewezen verdienste.</p>'
+        : `<button class="btn" data-preselect-badge="${esc(badge.slug)}">✨ Ken deze badge toe</button>`}
     </div>
   </div>
   <h2 class="reveal">Recente ontvangers</h2>
@@ -276,8 +276,8 @@ function profilePage({ profile, isOwn, scores, shelf, recentViews, reliability, 
   <h1 class="reveal">${esc(profile.avatar_emoji)} ${esc(profile.display_name)}</h1>
   ${profile.bio ? `<p class="muted reveal">${esc(profile.bio)}</p>` : ''}
   <div class="stat-row reveal">
-    <div class="stat"><div class="num goed">${scores.goed}</div><div class="lbl">😇 Pluim-score</div></div>
-    <div class="stat"><div class="num ondeugd">${scores.ondeugd}</div><div class="lbl">😈 Duivel-score</div></div>
+    <div class="stat"><div class="num goed">${scores.goed}</div><div class="lbl">✨ +Aura</div></div>
+    <div class="stat"><div class="num ondeugd">${scores.ondeugd}</div><div class="lbl">💀 −Aura</div></div>
     <div class="stat"><div class="num">${shelf.length}</div><div class="lbl">🏅 Badges</div></div>
     <div class="stat"><div class="num">${Math.round(reliability.ratio * 100)}%</div><div class="lbl">🔎 Awards bevestigd</div></div>
   </div>
@@ -308,8 +308,8 @@ function leaderboardPage({ tab, rows, weekLabel }) {
   <h1 class="reveal">De Ranglijst</h1>
   <p class="muted reveal">Punten zijn gewogen naar geloofwaardigheid: een betwiste of dubieuze badge telt niet of nauwelijks. Er is bewust geen eeuwige ranglijst — elke maandag krijgt iedereen een nieuwe kans.</p>
   <div class="tabs reveal">
-    <a class="tab ${tab === 'goed' ? 'active' : ''}" href="/ranglijst?tab=goed">😇 Engelen</a>
-    <a class="tab ${tab === 'ondeugd' ? 'active' : ''}" href="/ranglijst?tab=ondeugd">😈 Duivels</a>
+    <a class="tab ${tab === 'goed' ? 'active' : ''}" href="/ranglijst?tab=goed">✨ +Aura</a>
+    <a class="tab ${tab === 'ondeugd' ? 'active' : ''}" href="/ranglijst?tab=ondeugd">💀 −Aura</a>
   </div>
   <div class="card reveal">${table}</div>`;
 }
@@ -417,7 +417,7 @@ function awardModal(remaining) {
       </div>
 
       <p style="display:flex;gap:var(--s2);margin-top:var(--s4)">
-        <button class="btn" id="award-submit">🏅 Ken toe</button>
+        <button class="btn" id="award-submit">✨ Ken toe</button>
         <button class="btn btn-quiet" id="award-cancel" type="button">Annuleer</button>
       </p>
     </div>

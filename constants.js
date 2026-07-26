@@ -1,4 +1,4 @@
-// Alle getunede getallen van Pluim & Duivel. Onderbouwing per getal: zie RESEARCH.md.
+// Alle getunede getallen van Aura. Onderbouwing per getal: zie RESEARCH.md.
 module.exports = {
   // Award-economie (HeyTaco: 4-6/dag is de sweet spot; verloop voorkomt hamsteren)
   DAILY_AWARD_CAP: 5,

@@ -7,7 +7,7 @@ const crypto = require('crypto');
 const { open, DATA_DIR } = require('./db');
 const svc = require('./service');
 
-const DB_PATH = path.join(DATA_DIR, 'pluim.db');
+const DB_PATH = path.join(DATA_DIR, 'aura.db');
 for (const suffix of ['', '-wal', '-shm']) {
   const p = DB_PATH + suffix;
   if (fs.existsSync(p)) fs.unlinkSync(p);
@@ -29,7 +29,7 @@ const iso = (daysAgo, hour = 12, minute = 0) => {
 
 // -- gebruikers (backdated zodat niemand in proeftijd zit) -------------------
 const USERS = [
-  ['pluimenraad', 'De Pluimenraad', '🏛️', 'Het officiële orgaan voor automatische onderscheidingen.', 400, 1],
+  ['aura-raad', 'De Aura-raad', '🏛️', 'Het officiële orgaan voor automatische onderscheidingen.', 400, 1],
   ['jesse', 'Jesse', '🦊', 'Badgejager. Op drie legendarisches na compleet.', 180, 0],
   ['fatima', 'Fatima', '🌻', 'Schrijft citaties waar je bij moet gaan zitten.', 200, 0],
   ['henk', 'Opa Henk', '🎩', 'Snapt alleen de feed en de twijfelknop. Dat is genoeg.', 90, 0],
@@ -37,7 +37,7 @@ const USERS = [
   ['omar', 'Omar', '🌵', 'Verzamelt ondeugd-badges met lichte trots.', 120, 0],
   ['sanne', 'Sanne', '🚀', 'Rent voor elke trein. Haalt de meeste.', 160, 0],
   ['ruben', 'Ruben', '🥸', 'Kent de catalogus beter dan zijn agenda.', 110, 0],
-  ['priya', 'Priya', '🦩', 'Deelt pluimen uit als confetti.', 140, 0],
+  ['priya', 'Priya', '🦩', 'Deelt aura uit als confetti.', 140, 0],
 ];
 const insertUser = db.prepare(`
   INSERT INTO users (username, display_name, password_hash, avatar_emoji, bio, is_system, created_at)
@@ -159,6 +159,6 @@ const counts = {
   vouches: db.prepare(`SELECT COUNT(*) AS n FROM vouches`).get().n,
 };
 console.log(`Seed klaar: ${counts.users} gebruikers, ${counts.badges} badges, ${counts.awards} awards ` +
-  `(waarvan ${counts.auto} van de Pluimenraad, ${counts.disputed} betwist), ${counts.vouches} vouches/doubts.`);
+  `(waarvan ${counts.auto} van de Aura-raad, ${counts.disputed} betwist), ${counts.vouches} vouches/doubts.`);
 console.log('Inloggen kan met bijv. jesse / demo123');
 db.close();

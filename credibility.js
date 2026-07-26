@@ -1,4 +1,4 @@
-// Alle scoringslogica van Pluim & Duivel. Puur en deterministisch:
+// Alle scoringslogica van Aura. Puur en deterministisch:
 // zelfde input geeft altijd dezelfde output. Onderbouwing: RESEARCH.md.
 const C = require('./constants');
 
