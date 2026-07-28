@@ -1,6 +1,7 @@
 // Server-rendered templates. Eén bron voor alle HTML; ook de feed-fragmenten
 // voor polling komen hiervandaan zodat er nooit twee kaart-templates bestaan.
 const C = require('./constants');
+const ICONS = require('./icons');
 
 function esc(s) {
   return String(s ?? '').replace(/[&<>"']/g, c => ({
@@ -63,7 +64,12 @@ function badgeRing(badge, { small = false } = {}) {
   if (badge.is_secret && badge.hidden) {
     return `<div class="badge-ring secret ${small ? 'small' : ''}" aria-label="Geheime badge">???</div>`;
   }
-  return `<div class="badge-ring rarity-${esc(badge.rarity)} ${small ? 'small' : ''}" aria-hidden="true">${esc(badge.emoji)}</div>`;
+  const inner = ICONS[badge.slug];
+  const content = inner
+    ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`
+    : esc(badge.emoji);
+  const iconCls = inner ? ` has-icon ic-${esc(badge.categorie)}` : '';
+  return `<div class="badge-ring rarity-${esc(badge.rarity)}${iconCls} ${small ? 'small' : ''}" aria-hidden="true">${content}</div>`;
 }
 
 // De award-kaart — hét feed-element (ook als polling-fragment gebruikt).

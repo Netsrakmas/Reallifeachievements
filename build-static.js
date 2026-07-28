@@ -27,6 +27,7 @@ for (const b of raw) {
 }
 
 const QRCode = require(path.join(APP, 'node_modules/qrcode'));
+const ICONS = require(path.join(APP, 'icons.js'));
 let QR_SVG = '';
 const html = `<!DOCTYPE html>
 <html lang="nl"><head>
@@ -80,6 +81,8 @@ font-size:26px;background:var(--surface-2);border:2px solid var(--bronze);flex-s
 .ring.rare{border-color:var(--accent);background:var(--accent-soft)}
 .ring.legendary{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 0 0 4px var(--accent-soft)}
 .ring.secret{border-style:dashed;border-color:var(--ink-dim);color:var(--ink-dim);font-size:15px;font-weight:700}
+.ring svg{width:58%;height:58%}
+.ring.ic-goed{color:var(--halo)}.ring.ic-ondeugd{color:var(--mischief)}.ring.ic-neutraal{color:var(--accent-deep)}
 .rlabel{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
 .rlabel.common{color:var(--bronze)}.rlabel.uncommon{color:var(--silver)}
 .rlabel.rare,.rlabel.legendary{color:var(--accent-deep)}
@@ -244,6 +247,7 @@ color:var(--ink-dim);font-family:var(--font);font-weight:700;font-size:13px;padd
 'use strict';
 // ---------- data ----------
 const BADGES = ${JSON.stringify(badges)};
+const ICONS = ${JSON.stringify(ICONS)};
 const PTS = {common:5, uncommon:15, rare:30, legendary:60};
 const RNL = {common:'Gewoon', uncommon:'Ongewoon', rare:'Zeldzaam', legendary:'Legendarisch'};
 const USERS = [
@@ -332,7 +336,10 @@ const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>'
 // ---------- weergave ----------
 const view = document.getElementById('view');
 function ring(b, extra){
-  return '<div class="ring ' + b.rarity + (extra||'') + '" aria-hidden="true">' + b.emoji + '</div>';
+  const inner = ICONS[b.slug];
+  const content = inner ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+inner+'</svg>' : b.emoji;
+  const ic = inner ? ' ic-'+b.categorie : '';
+  return '<div class="ring ' + b.rarity + ic + (extra||'') + '" aria-hidden="true">' + content + '</div>';
 }
 function card(a, stamped){
   const b = byS[a.s], st = status(a), t = tier(a);
