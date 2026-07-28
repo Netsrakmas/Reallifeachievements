@@ -123,15 +123,17 @@ h3 { font-size: var(--t-title); }
 }
 .award-card { display: grid; grid-template-columns: 72px 1fr; gap: var(--s3); }
 .award-card.disputed { opacity: 0.66; box-shadow: none; border-style: dashed; }
-.award-head { display: flex; align-items: baseline; gap: var(--s2); flex-wrap: wrap; }
-.award-head .who { font-weight: 700; }
+.award-badge-name { font-family: var(--font-display); font-weight: 800; font-size: var(--t-title); letter-spacing: -0.01em; line-height: 1.15; }
+.award-head { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: var(--t-small); color: var(--ink-dim); margin-top: 3px; }
+.award-head .who { font-weight: 600; color: var(--ink); }
+.award-head .who:hover { color: var(--accent-deep); }
+.award-head-sep { color: var(--ink-dim); }
 .award-time { font-size: var(--t-small); color: var(--ink-dim); margin-left: auto; }
 .citation {
-  font-size: var(--t-body); line-height: 1.5; font-weight: 500;
-  margin: var(--s2) 0;
-  padding-left: var(--s3); border-left: 3px solid var(--accent-soft);
+  font-size: var(--t-body); line-height: 1.5; font-weight: 400; color: var(--ink-dim);
+  margin: var(--s3) 0 0;
+  padding-left: var(--s3); border-left: 3px solid var(--line-strong);
 }
-.award-badge-name { font-family: var(--font-display); font-weight: 800; font-size: var(--t-title); letter-spacing: -0.01em; }
 .award-actions { display: flex; gap: var(--s2); flex-wrap: wrap; align-items: center; margin-top: var(--s3); }
 .award-meta { font-size: var(--t-small); color: var(--ink-dim); margin-top: var(--s1); }
 

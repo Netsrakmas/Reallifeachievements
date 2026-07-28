@@ -95,15 +95,14 @@ function awardCard(v, { stamped = false } = {}) {
   <article class="card award-card reveal ${v.status === 'disputed' ? 'disputed' : ''} ${stamped ? 'stamped' : ''}" data-award-id="${v.id}" data-created="${esc(v.created_at)}">
     ${badgeRing(v.badge)}
     <div>
-      <div class="award-head">
-        <span class="who"><a href="/u/${esc(v.giver.username)}">${esc(v.giver.avatar_emoji)} ${esc(v.giver.display_name)}</a></span>
-        <span class="muted">kende toe aan</span>
-        <span class="who"><a href="/u/${esc(v.recipient.username)}">${esc(v.recipient.avatar_emoji)} ${esc(v.recipient.display_name)}</a></span>
-        <span class="award-time">${timeAgo(v.created_at)}</span>
-      </div>
       <div class="award-badge-name">${esc(v.badge.naam)}
         <span class="rarity-label ${esc(v.badge.rarity)}">${RARITY_NL[v.badge.rarity]}</span>
-        <span class="chip cat-${esc(v.badge.categorie)}">${v.badge.categorie === 'goed' ? '😇' : v.badge.categorie === 'ondeugd' ? '😈' : '⚖️'} ${CAT_NL[v.badge.categorie]}</span>
+      </div>
+      <div class="award-head">
+        <a class="who" href="/u/${esc(v.recipient.username)}">${esc(v.recipient.avatar_emoji)} ${esc(v.recipient.display_name)}</a>
+        <span class="award-head-sep">van</span>
+        <a class="who" href="/u/${esc(v.giver.username)}">${esc(v.giver.display_name)}</a>
+        <span class="award-time">${timeAgo(v.created_at)}</span>
       </div>
       <blockquote class="citation">"${esc(v.citation)}"</blockquote>
       ${photo}

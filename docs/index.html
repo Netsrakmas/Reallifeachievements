@@ -56,11 +56,12 @@ font-size:26px;background:var(--surface-2);border:2px solid var(--bronze);flex-s
 .rlabel{font-size:var(--t-micro);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
 .rlabel.common{color:var(--bronze)}.rlabel.uncommon{color:var(--silver)}
 .rlabel.rare,.rlabel.legendary{color:var(--accent-deep)}
-.bname{font-weight:800;font-size:var(--t-title);letter-spacing:-.01em}
-.who{font-weight:700}
-.head{display:flex;flex-wrap:wrap;gap:6px;align-items:baseline;font-size:var(--t-small)}
+.bname{font-weight:800;font-size:var(--t-title);letter-spacing:-.01em;line-height:1.15}
+.head{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:var(--t-small);color:var(--ink-dim);margin-top:3px}
+.who{font-weight:600;color:var(--ink)}
+.hsep{color:var(--ink-dim)}
 .time{font-size:var(--t-small);color:var(--ink-dim);margin-left:auto}
-.cite{font-size:var(--t-body);line-height:1.5;font-weight:500;border-left:3px solid var(--accent-soft);padding-left:var(--s3);margin:var(--s2) 0}
+.cite{font-size:var(--t-body);line-height:1.5;font-weight:400;color:var(--ink-dim);border-left:3px solid var(--line-strong);padding-left:var(--s3);margin:var(--s3) 0 0}
 .chip{display:inline-flex;align-items:center;gap:4px;font-size:var(--t-small);font-weight:600;
 border:1px solid var(--line-strong);border-radius:999px;padding:4px 10px;color:var(--ink-dim);background:var(--surface)}
 .chip.t-legendary{color:var(--accent-deep);border-color:var(--accent);background:var(--accent-soft)}
@@ -325,11 +326,10 @@ function card(a, stamped){
     : '';
   return '<article class="card award reveal'+(st==='disputed'?' disputed':'')+(stamped?' stamped':'')+'">'
     + ring(b)
-    + '<div><div class="head"><span class="who">'+byU[a.g].a+' '+esc(byU[a.g].n)+'</span>'
-    + '<span class="muted">kende toe aan</span><span class="who">'+byU[a.r].a+' '+esc(byU[a.r].n)+'</span>'
+    + '<div><div class="bname">'+esc(b.naam)+' <span class="rlabel '+b.rarity+'">'+RNL[b.rarity]+'</span></div>'
+    + '<div class="head"><span class="who">'+byU[a.r].a+' '+esc(byU[a.r].n)+'</span>'
+    + '<span class="hsep">van</span><span class="who">'+esc(byU[a.g].n)+'</span>'
     + '<span class="time">'+ago(a.t)+'</span></div>'
-    + '<div class="bname">'+esc(b.naam)+' <span class="rlabel '+b.rarity+'">'+RNL[b.rarity]+'</span> '
-    + '<span class="chip c-'+b.categorie+'">'+(b.categorie==='goed'?'😇':b.categorie==='ondeugd'?'😈':'⚖️')+'</span></div>'
     + '<blockquote class="cite">"'+esc(a.c)+'"</blockquote>'
     + '<div class="acts"><span class="chip t-'+t.k+'">'+t.l+'</span>'+rx+stance+'</div>'
     + (a.inP?'<div class="meta">🤝 In persoon overhandigd via QR</div>':'')
