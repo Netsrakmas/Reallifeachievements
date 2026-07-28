@@ -114,4 +114,33 @@ module.exports = {
   spinnenwreker: '<circle cx="12" cy="12.5" r="3"/><path d="M9.2 11L4 8M9 12.5H4M9.2 14L4.5 16.5"/><path d="M14.8 11L20 8M15 12.5H20M14.8 14L19.5 16.5"/><path d="M10.5 9.8L9 5.5M13.5 9.8L15 5.5"/>',
   'gladde-handen': '<path d="M4 15c0 2.6 2.2 4.4 5 4.4h6c2.8 0 5-1.8 5-4.4"/><path d="M12 4.5l2.2 3.2L12 11l-2.2-3.3z"/><path d="M7.5 9c1.2-1.1 2.6-1.1 3.8 0M16.5 9c-1.2-1.1-2.6-1.1-3.8 0"/>',
   tuinkabouter: '<path d="M7 11L12 3l5 8z"/><path d="M8.5 11c0 3.2 1.6 6 3.5 6s3.5-2.8 3.5-6"/><circle cx="12" cy="12.6" r="1"/>',
+
+  // --- Batch 6 (13 losse + 6 ketens) ---
+  zwartkijker: '<rect x="3" y="8" width="18" height="11" rx="2"/><path d="M8 8L11 4M16 8L13 4"/><circle cx="16.5" cy="13.5" r="1.2"/>',
+  'controleur-vriend': '<path d="M3 8.5h18v2.5a1.5 1.5 0 0 0 0 3v2.5H3v-2.5a1.5 1.5 0 0 0 0-3z"/><path d="M8 12l2 2 4-4"/>',
+  'wildplasser-in-nood': '<path d="M12 3.5c3 4 5.5 7 5.5 9.5a5.5 5.5 0 0 1-11 0C6.5 10.5 9 7.5 12 3.5z"/><path d="M12 8.5v3.5M12 14.8v.01"/>',
+  duivenverjager: '<circle cx="10" cy="12.5" r="2.8"/><circle cx="14.3" cy="10" r="1.4"/><path d="M7.6 11.4L3.5 9.5l2.6 3.6M12.6 13.6l3.8 1.8-1-3.2"/><path d="M4.5 5l15 14"/>',
+  'vier-seizoenen': '<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v4M12 16.5v4M3.5 12h4M16.5 12h4"/>',
+  eregalerij: '<rect x="4" y="4" width="16" height="16" rx="1.5"/><circle cx="12" cy="10" r="2.5"/><path d="M7.5 17c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4"/>',
+  'de-boemerang': '<path d="M7 7a7 7 0 1 1-2.4 5.4"/><path d="M4 8.4l.4 4 4-.8"/>',
+  nachtburgemeester: '<path d="M16 3.5a9 9 0 1 0 5.5 14.5A7.5 7.5 0 0 1 16 3.5z"/><path d="M7 5.5l.7 1.7L9.4 8l-1.7.8L7 10.5l-.7-1.7L4.6 8l1.7-.8z"/>',
+  dubbelagent: '<path d="M4 10.5h16"/><path d="M6 10.5c0-3 2.5-5 6-5s6 2 6 5"/><circle cx="9" cy="14.5" r="2.2"/><circle cx="15" cy="14.5" r="2.2"/><path d="M11.2 14.5h1.6"/>',
+  'de-verzamelaar': '<rect x="3.5" y="3.5" width="7.5" height="7.5" rx="1.2"/><rect x="13" y="3.5" width="7.5" height="7.5" rx="1.2"/><rect x="3.5" y="13" width="7.5" height="7.5" rx="1.2"/><rect x="13" y="13" width="7.5" height="7.5" rx="1.2"/>',
+  'eerste-bloed': '<path d="M12 3.5c3 4 5.5 7 5.5 9.5a5.5 5.5 0 0 1-11 0C6.5 10.5 9 7.5 12 3.5z"/><path d="M10.8 11.2l1.2-1v5.5"/>',
+  'getuige-expert': '<path d="M2.5 11s3.5-5.5 9.5-5.5 9.5 5.5 9.5 5.5-3.5 5.5-9.5 5.5c-1.5 0-2.9-.3-4.1-.8"/><circle cx="12" cy="11" r="2.3"/><path d="M15 17l2 2 4-4"/>',
+  scepticus: '<circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5.5 5.5"/><path d="M8.9 8.9a1.7 1.7 0 1 1 2.4 2.2c-.7.5-1 .9-1 1.8M10.3 15v.01"/>',
 };
+
+// Ketens: één tekening per keten, hergebruikt voor brons/zilver/goud
+// (rariteit wordt al door de ring-kleur/rand onderscheiden).
+const _chains = {
+  aurajager: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/>',
+  chaospact: '<path d="M5 11.5a7 7 0 0 1 14 0V15a2 2 0 0 1-2 2v3H7v-3a2 2 0 0 1-2-2z"/><circle cx="9.3" cy="11.5" r="1.3"/><circle cx="14.7" cy="11.5" r="1.3"/><path d="M11 20v-2M13 20v-2"/>',
+  vrijgevige: '<rect x="4" y="9.5" width="16" height="10.5" rx="1"/><path d="M4 13.5h16M12 9.5V20"/><path d="M12 9.5C10.2 9.5 8.5 8.7 8.5 7.2S10 5 12 9.5C14 5 15.5 5.7 15.5 7.2S13.8 9.5 12 9.5z"/>',
+  ooggetuige: '<path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="3"/>',
+  feedvedette: '<path d="M12 3.2l2.6 5.9 6.4.6-4.8 4.3 1.4 6.3L12 17l-5.6 3.3 1.4-6.3L3 9.7l6.4-.6z"/>',
+  'ketting-van-goud': '<path d="M9 12h6"/><rect x="2.5" y="8.5" width="9.5" height="7" rx="3.5"/><rect x="12" y="8.5" width="9.5" height="7" rx="3.5"/>',
+};
+for (const [slug, svg] of Object.entries(_chains)) {
+  for (const step of ['brons', 'zilver', 'goud']) module.exports[`${slug}-${step}`] = svg;
+}
