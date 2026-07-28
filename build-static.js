@@ -39,7 +39,7 @@ const html = `<!DOCTYPE html>
 :root{--bg:#F2F3F7;--surface:#FFFFFF;--surface-2:#EBECF2;--ink:#16161C;--ink-dim:#6B6B78;
 --accent:#5B57E8;--accent-deep:#4B47D0;--accent-soft:rgba(91,87,232,.12);
 --halo:#0F7D3E;--halo-soft:rgba(15,125,62,.12);--mischief:#D42B4C;--mischief-soft:rgba(212,43,76,.12);
---bronze:#8A6236;--silver:#686F7A;--line:rgba(22,22,28,.1);--line-strong:rgba(22,22,28,.16);
+--bronze:#8A6236;--silver:#686F7A;--line:rgba(22,22,28,.1);--line-strong:rgba(22,22,28,.16);--glass:rgba(255,255,255,.85);
 --sh:0 1px 2px rgba(22,22,28,.06),0 4px 16px rgba(22,22,28,.08);
 --sh-lift:0 12px 32px rgba(22,22,28,.16);
 --s1:4px;--s2:8px;--s3:16px;--s4:32px;--r:14px;--rl:20px;
@@ -58,7 +58,7 @@ h2{font-size:22px}
 .mono{font-variant-numeric:tabular-nums}
 .wrap{max-width:640px;margin:0 auto;padding:0 var(--s3)}
 header.top{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:var(--s2);
-padding:12px var(--s3);border-bottom:1px solid var(--line);background:rgba(255,255,255,.8);backdrop-filter:blur(12px)}
+padding:12px var(--s3);border-bottom:1px solid var(--line);background:var(--glass);backdrop-filter:blur(12px)}
 .brand{font-weight:800;font-size:20px;letter-spacing:-.02em;margin-right:auto}
 select.as{background:var(--surface);color:var(--ink);border:1px solid var(--line-strong);
 border-radius:var(--r);padding:8px 10px;font-family:var(--font);font-size:14px;min-height:44px}
@@ -101,7 +101,7 @@ font-size:13px;font-weight:600;padding:8px 12px;min-height:40px;cursor:pointer;f
 .meta{font-size:13px;color:var(--ink-dim);margin-top:6px}
 .tabbar{position:fixed;bottom:0;left:0;right:0;z-index:40;display:flex;align-items:center;
 padding-bottom:env(safe-area-inset-bottom);
-border-top:1px solid var(--line);background:rgba(255,255,255,.92);backdrop-filter:blur(14px)}
+border-top:1px solid var(--line);background:var(--glass);backdrop-filter:blur(14px)}
 .tabbar-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
 background:none;border:none;color:var(--ink-dim);font-family:var(--font);
 font-weight:600;font-size:11px;padding:9px 2px;cursor:pointer;min-height:56px}
@@ -166,6 +166,7 @@ color:var(--ink-dim);font-family:var(--font);font-weight:700;font-size:13px;padd
 @keyframes rv{to{opacity:1;transform:none}}
 .stamped{animation:st .35s cubic-bezier(.2,1.3,.4,1)}
 @keyframes st{0%{transform:scale(1.3);opacity:0}100%{transform:none;opacity:1}}}
+@media(prefers-color-scheme:dark){:root{--bg:#0F1014;--surface:#1A1B21;--surface-2:#24262E;--ink:#ECECF1;--ink-dim:#9B9BA8;--accent:#5B57E8;--accent-deep:#ADA9FF;--accent-soft:rgba(124,121,242,.2);--halo:#3FCE8A;--halo-soft:rgba(63,206,138,.18);--mischief:#FF6E88;--mischief-soft:rgba(255,110,136,.18);--bronze:#C79A5E;--silver:#A7ADB8;--line:rgba(255,255,255,.1);--line-strong:rgba(255,255,255,.18);--glass:rgba(18,19,24,.82);--sh:0 1px 2px rgba(0,0,0,.4),0 6px 20px rgba(0,0,0,.45);--sh-lift:0 12px 32px rgba(0,0,0,.55)}body{background:radial-gradient(1000px 420px at 50% -200px,rgba(124,121,242,.16),transparent),var(--bg)}}
 </style>
 </head><body>
 
