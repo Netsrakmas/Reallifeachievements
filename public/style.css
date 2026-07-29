@@ -48,6 +48,7 @@ body {
     radial-gradient(1100px 460px at 50% -240px, rgba(91, 87, 232, 0.1), transparent),
     var(--bg);
   min-height: 100vh;
+  padding-bottom: calc(80px + env(safe-area-inset-bottom));
 }
 a { color: var(--accent-deep); text-decoration: none; font-weight: 600; }
 a:hover { text-decoration: underline; }
@@ -67,31 +68,57 @@ h3 { font-size: var(--t-title); }
 }
 .muted { color: var(--ink-dim); }
 .mono { font-variant-numeric: tabular-nums; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 
 .wrap { max-width: 780px; margin: 0 auto; padding: var(--s3); }
 
-/* ---- navigatie ---- */
-.nav {
-  display: flex; align-items: center; gap: var(--s2); flex-wrap: wrap;
-  padding: 12px var(--s3);
+/* ---- navigatie: slanke topbalk + onderste tabbalk (app-stijl) ---- */
+.topbar {
+  display: flex; align-items: center; gap: var(--s2);
+  padding: 10px var(--s3);
   border-bottom: 1px solid var(--line);
   background: var(--glass);
   backdrop-filter: blur(12px);
   position: sticky; top: 0; z-index: 50;
 }
-.nav .brand {
-  font-family: var(--font-display); font-weight: 800; font-size: var(--t-title); letter-spacing: -0.02em;
-  color: var(--ink); text-decoration: none;
+.topbar .brand {
+  font-family: var(--font-display); font-weight: 800; font-size: var(--t-head); letter-spacing: -0.02em;
+  color: var(--ink); text-decoration: none; margin-right: auto;
 }
-.nav .brand:hover { color: var(--accent-deep); text-decoration: none; }
-.nav-links { display: flex; gap: var(--s1); align-items: center; margin-left: auto; flex-wrap: wrap; }
-.nav-links a {
-  color: var(--ink-dim); padding: 8px 14px; border-radius: 999px;
-  min-height: 44px; display: inline-flex; align-items: center; text-decoration: none;
-  font-size: var(--t-small); font-weight: 600;
+.topbar .brand:hover { color: var(--accent-deep); text-decoration: none; }
+.topbar-actions { display: flex; align-items: center; gap: var(--s1); }
+.iconbtn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; border-radius: 999px;
+  background: transparent; border: none; cursor: pointer;
+  color: var(--ink-dim); font-size: 20px; font-family: var(--font-body);
 }
-.nav-links a:hover { color: var(--ink); background: var(--surface-2); text-decoration: none; }
-.nav-links a.active { color: var(--accent-deep); background: var(--accent-soft); }
+.iconbtn:hover { background: var(--surface-2); color: var(--ink); }
+
+.tabbar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+  display: flex; align-items: center;
+  padding-bottom: env(safe-area-inset-bottom);
+  border-top: 1px solid var(--line);
+  background: var(--glass); backdrop-filter: blur(14px);
+}
+.tabbar-item {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  background: none; border: none; color: var(--ink-dim);
+  font-weight: 600; font-size: var(--t-micro); padding: 9px 2px; min-height: 56px;
+  text-decoration: none;
+}
+.tabbar-item:hover { color: var(--ink); text-decoration: none; }
+.tabbar-item svg { width: 24px; height: 24px; }
+.tabbar-item.on { color: var(--accent-deep); }
+.tabbar-give {
+  flex: 0 0 auto; display: flex; align-items: center; justify-content: center;
+  width: 52px; height: 52px; margin: -14px 6px 0; border-radius: 18px;
+  background: var(--accent); color: #FFFFFF; border: 3px solid var(--surface);
+  cursor: pointer; box-shadow: var(--shadow-lift);
+}
+.tabbar-give svg { width: 26px; height: 26px; }
+.tabbar-give:active { transform: scale(0.94); }
 
 .btn {
   font-family: var(--font-body); font-weight: 700; font-size: var(--t-body);
@@ -346,9 +373,9 @@ table.board td.pts { font-weight: 700; font-variant-numeric: tabular-nums; }
 /* ---- dark mode: volgt automatisch de telefoon-/OS-stand ---- */
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0F1014;
-    --surface: #1A1B21;
-    --surface-2: #24262E;
+    --bg: #0C0D11;
+    --surface: #1B1D26;
+    --surface-2: #2A2D38;
     --ink: #ECECF1;
     --ink-dim: #9B9BA8;
     --accent: #5B57E8;
@@ -360,11 +387,11 @@ table.board td.pts { font-weight: 700; font-variant-numeric: tabular-nums; }
     --mischief-soft: rgba(255, 110, 136, 0.18);
     --bronze: #C79A5E;
     --silver: #A7ADB8;
-    --line: rgba(255, 255, 255, 0.1);
-    --line-strong: rgba(255, 255, 255, 0.18);
-    --glass: rgba(18, 19, 24, 0.82);
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 6px 20px rgba(0, 0, 0, 0.45);
-    --shadow-lift: 0 12px 32px rgba(0, 0, 0, 0.55);
+    --line: rgba(255, 255, 255, 0.16);
+    --line-strong: rgba(255, 255, 255, 0.26);
+    --glass: rgba(16, 17, 23, 0.82);
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 8px 24px rgba(0, 0, 0, 0.55);
+    --shadow-lift: 0 12px 32px rgba(0, 0, 0, 0.6);
   }
   body {
     background:

@@ -27,10 +27,11 @@ h2{font-size:var(--t-head)}
 .eyebrow{font-size:var(--t-micro);font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-deep);margin:var(--s3) 0 var(--s1)}
 .muted{color:var(--ink-dim)}
 .mono{font-variant-numeric:tabular-nums}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .wrap{max-width:640px;margin:0 auto;padding:0 var(--s3)}
 header.top{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:var(--s2);
 padding:12px var(--s3);border-bottom:1px solid var(--line);background:var(--glass);backdrop-filter:blur(12px)}
-.brand{font-weight:800;font-size:var(--t-title);letter-spacing:-.02em;margin-right:auto}
+.brand{font-weight:800;font-size:var(--t-head);letter-spacing:-.02em;margin-right:auto}
 select.as{background:var(--surface);color:var(--ink);border:1px solid var(--line-strong);
 border-radius:var(--r);padding:8px 10px;font-family:var(--font);font-size:14px;min-height:44px}
 .btn{font-family:var(--font);font-weight:700;font-size:15px;background:var(--accent);color:#fff;
@@ -140,7 +141,7 @@ color:var(--ink-dim);font-family:var(--font);font-weight:700;font-size:13px;padd
 @keyframes rv{to{opacity:1;transform:none}}
 .stamped{animation:st .35s cubic-bezier(.2,1.3,.4,1)}
 @keyframes st{0%{transform:scale(1.3);opacity:0}100%{transform:none;opacity:1}}}
-@media(prefers-color-scheme:dark){:root{--bg:#0F1014;--surface:#1A1B21;--surface-2:#24262E;--ink:#ECECF1;--ink-dim:#9B9BA8;--accent:#5B57E8;--accent-deep:#ADA9FF;--accent-soft:rgba(124,121,242,.2);--halo:#3FCE8A;--halo-soft:rgba(63,206,138,.18);--mischief:#FF6E88;--mischief-soft:rgba(255,110,136,.18);--bronze:#C79A5E;--silver:#A7ADB8;--line:rgba(255,255,255,.1);--line-strong:rgba(255,255,255,.18);--glass:rgba(18,19,24,.82);--sh:0 1px 2px rgba(0,0,0,.4),0 6px 20px rgba(0,0,0,.45);--sh-lift:0 12px 32px rgba(0,0,0,.55)}body{background:radial-gradient(1000px 420px at 50% -200px,rgba(124,121,242,.16),transparent),var(--bg)}}
+@media(prefers-color-scheme:dark){:root{--bg:#0C0D11;--surface:#1B1D26;--surface-2:#2A2D38;--ink:#ECECF1;--ink-dim:#9B9BA8;--accent:#5B57E8;--accent-deep:#ADA9FF;--accent-soft:rgba(124,121,242,.2);--halo:#3FCE8A;--halo-soft:rgba(63,206,138,.18);--mischief:#FF6E88;--mischief-soft:rgba(255,110,136,.18);--bronze:#C79A5E;--silver:#A7ADB8;--line:rgba(255,255,255,.16);--line-strong:rgba(255,255,255,.26);--glass:rgba(16,17,23,.82);--sh:0 1px 2px rgba(0,0,0,.5),0 8px 24px rgba(0,0,0,.55);--sh-lift:0 12px 32px rgba(0,0,0,.6)}body{background:radial-gradient(1000px 420px at 50% -200px,rgba(124,121,242,.16),transparent),var(--bg)}}
 </style>
 </head><body>
 
@@ -340,7 +341,7 @@ function card(a, stamped){
 
 function renderFeed(){
   const sorted = [...AWARDS].sort((x,y)=>y.t-x.t);
-  view.innerHTML = '<div class="eyebrow">Jouw aura · bijgehouden door je vrienden</div><h1 class="reveal">De Feed</h1>'
+  view.innerHTML = '<h1 class="sr-only">Feed</h1>'
     + '<p class="note reveal">Aura-prototype (zonder server): je toekenningen blijven bewaard in <em>deze</em> browser (geen deling tussen telefoons — dat vraagt een server). Wissel rechtsboven van gebruiker om het multi-user-effect te spelen. <button id="reset-btn" class="fchip" style="margin-top:6px">↺ Begin opnieuw met de demo-data</button></p>'
     + sorted.map(a=>card(a)).join('');
   const rb = document.getElementById('reset-btn');

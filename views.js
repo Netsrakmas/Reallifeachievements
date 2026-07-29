@@ -24,21 +24,31 @@ function timeAgo(iso) {
 }
 
 function layout({ user, title, active = '', content, unread = 0, remaining = null }) {
+  const icon = (p) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+  const ic = {
+    feed: icon('<path d="M3 10.7 12 3l9 7.7"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/>'),
+    cat: icon('<rect x="3" y="3" width="7" height="7" rx="1.8"/><rect x="14" y="3" width="7" height="7" rx="1.8"/><rect x="3" y="14" width="7" height="7" rx="1.8"/><rect x="14" y="14" width="7" height="7" rx="1.8"/>'),
+    rank: icon('<path d="M6 4h12v3a6 6 0 0 1-12 0V4Z"/><path d="M6 5H3.5v1A3 3 0 0 0 6 9"/><path d="M18 5h2.5v1A3 3 0 0 1 18 9"/><path d="M12 13v3"/><path d="M8.5 20.5a3.5 3.5 0 0 1 7 0Z"/>'),
+    prof: icon('<circle cx="12" cy="8" r="3.6"/><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0Z"/>'),
+    plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  };
   const nav = user ? `
-    <nav class="nav">
+    <header class="topbar">
       <a class="brand" href="/">Aura</a>
-      <div class="nav-links">
-        <a href="/" class="${active === 'feed' ? 'active' : ''}">Feed</a>
-        <a href="/badges" class="${active === 'badges' ? 'active' : ''}">Catalogus</a>
-        <a href="/ranglijst" class="${active === 'ranglijst' ? 'active' : ''}">Ranglijst</a>
+      <div class="topbar-actions">
         <div class="bell-wrap">
-          <button class="btn btn-ghost" id="bell-btn" aria-label="Notificaties">🔔${unread > 0 ? `<span class="bell-count" id="bell-count">${unread}</span>` : '<span id="bell-count"></span>'}</button>
+          <button class="iconbtn" id="bell-btn" aria-label="Notificaties">🔔${unread > 0 ? `<span class="bell-count" id="bell-count">${unread}</span>` : '<span id="bell-count"></span>'}</button>
           <div class="notif-panel hidden" id="notif-panel" aria-live="polite"></div>
         </div>
-        <a href="/u/${esc(user.username)}" class="${active === 'profiel' ? 'active' : ''}" aria-label="Mijn profiel">${esc(user.avatar_emoji)} ${esc(user.display_name)}</a>
-        <button class="btn" id="open-award-btn">✨ Ken badge toe</button>
-        <form method="post" action="/logout" style="margin:0"><button class="btn btn-quiet" type="submit">Uitloggen</button></form>
+        <form method="post" action="/logout" style="margin:0"><button class="iconbtn" type="submit" aria-label="Uitloggen" title="Uitloggen">⎋</button></form>
       </div>
+    </header>
+    <nav class="tabbar" aria-label="Hoofdnavigatie">
+      <a href="/" class="tabbar-item ${active === 'feed' ? 'on' : ''}">${ic.feed}<span>Feed</span></a>
+      <a href="/badges" class="tabbar-item ${active === 'badges' ? 'on' : ''}">${ic.cat}<span>Catalogus</span></a>
+      <button class="tabbar-give" id="open-award-btn" aria-label="Ken badge toe">${ic.plus}</button>
+      <a href="/ranglijst" class="tabbar-item ${active === 'ranglijst' ? 'on' : ''}">${ic.rank}<span>Ranglijst</span></a>
+      <a href="/u/${esc(user.username)}" class="tabbar-item ${active === 'profiel' ? 'on' : ''}">${ic.prof}<span>Profiel</span></a>
     </nav>` : '';
   return `<!DOCTYPE html>
 <html lang="nl">
@@ -125,8 +135,7 @@ function feedPage({ views }) {
         <p>Nog geen daden verricht. De geschiedenis wacht.</p>
         <button class="btn" id="empty-award-btn">Ken de eerste badge toe</button></div>`;
   return `
-  <div class="eyebrow reveal">Jouw aura · bijgehouden door je vrienden</div>
-  <h1 class="reveal">De Feed</h1>
+  <h1 class="sr-only">Feed</h1>
   <div id="feed-error" class="error-state hidden" role="alert">
     <span>De feed kon niet worden ververst.</span>
     <button class="btn btn-ghost" id="feed-retry">Probeer opnieuw</button>
